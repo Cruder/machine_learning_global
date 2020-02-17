@@ -17,6 +17,7 @@ lib LibNeuratron
   ) : Bool
 
   fun predict_linear_model(model : LinearModel*, input : Float64*) : Float64
+  fun free_model(model : Pointer(LinearModel)) : Int32
 end
 
 module Neuratron
@@ -43,6 +44,10 @@ module Neuratron
 
     def predict(input)
       LibNeuratron.predict_linear_model(@model, input.to_unsafe)
+    end
+
+    def finalize
+      LibNeuratron.free_model(@model)
     end
   end
 end
