@@ -16,12 +16,16 @@ module Neuratron
   class LinearModel
     @model : LibNeuratron::LinearModel*
 
-    def initialize(@input : Int32, @ouput : Int32)
-      @model = LibNeuratron.create_linear_model(input, ouput)
+    def initialize(@input_size : Int32, @ouput_size : Int32)
+      @model = LibNeuratron.create_linear_model(input_size, ouput_size)
     end
 
     def model
       @model.value
+    end
+
+    def train
+      LibNeuratron.train_linear_model(@model)
     end
   end
 end
@@ -33,5 +37,7 @@ inputs = [
   [0.0, 1.0]
 ]
 expected_outputs = [[0], [0], [1], [1]]
+w = [-0.2, 0.5, 0.8]
 
 model = Neuratron::LinearModel.new(2, 1)
+pp model.train(input, ouput, w)

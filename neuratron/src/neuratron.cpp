@@ -13,10 +13,10 @@ extern "C" {
     return model;
   }
 
-  int train_linear_model(int i) {
+  int train_linear_model(struct LinearModel* model) {
     // Eigen::MatrixX3d in = input.inputs;
     // Eigen::MatrixX3d in = input.inputs;
     // Eigen::VectorXf w = model.inputs;
-    return i + 3;
+    return 3;
   }
 }
