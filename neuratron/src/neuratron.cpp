@@ -1,17 +1,22 @@
-#include "neuratron.hpp"
+#include "neuratron.h"
+#include <stdlib.h>
+#include <Eigen/Dense>
 
 extern "C" {
-  Foo* init_foo() {
-    Foo* foo = new Foo;
-    foo->array = new int[25];
-    foo->size = 25;
+  struct LinearModel* create_linear_model(int input_size, int output_size) {
+    struct LinearModel* model = new LinearModel;
+    model->sizeInput = input_size;
+    model->sizeOutput = output_size;
 
-    return foo;
+    model->inputs = new double[(input_size + 1) * output_size];
+
+    return model;
   }
 
-  extern int* give_42() {
-    int* foo = new int;
-    (*foo) = 42;
-    return foo;
+  int train_linear_model(int i) {
+    // Eigen::MatrixX3d in = input.inputs;
+    // Eigen::MatrixX3d in = input.inputs;
+    // Eigen::VectorXf w = model.inputs;
+    return i + 3;
   }
 }

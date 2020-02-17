@@ -4,10 +4,11 @@
 extern "C" {
   struct LinearModel{
       double* inputs;
-      int sizeInputs;
+      int sizeInput;
+      int sizeOutput;
   };
 
-  extern struct LinearModel* create_linear_model(const double *inputs, int size_inputs);
+  extern struct LinearModel* create_linear_model(int input_size, int output_size);
 }
 
 #endif // __NEURATRON_H__
