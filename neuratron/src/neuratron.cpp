@@ -62,4 +62,9 @@ extern "C" {
     // Eigen::VectorXf w = model.inputs;
     return true;
   }
+
+  int free_model(LinearModel* model) {
+    delete[] model->inputs;
+    return 0;
+  }
 }

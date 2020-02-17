@@ -12,6 +12,7 @@ lib LibNeuratron
     model : LinearModel*,
     input : Float64*, input_size : Int32,
     output : Float64*, output_size : Int32) : Bool
+  fun free_model(model : Pointer(LinearModel)) : Int32
 end
 
 module Neuratron
@@ -34,6 +35,10 @@ module Neuratron
 
     def train(input, output)
       LibNeuratron.train_linear_model(@model, input.to_unsafe, input.size, output.to_unsafe, output.size)
+    end
+
+    def finalize
+      LibNeuratron.free_model(@model)
     end
   end
 end
