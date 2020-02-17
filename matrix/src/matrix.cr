@@ -32,8 +32,6 @@ inputs = [
   [1.0, 1.0],
   [0.0, 1.0]
 ]
+expected_outputs = [[0], [0], [1], [1]]
 
-
-expected_outputs = [0, 0, 1, 1]
 model = Neuratron::LinearModel.new(2, 1)
-# pp model.train
