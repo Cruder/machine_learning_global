@@ -14,7 +14,7 @@ end
 
 module Neuratron
   class LinearModel
-    @model : LinearModel*
+    @model : LibNeuratron::LinearModel*
 
     def initialize(@input : Int32, @ouput : Int32)
       @model = LibNeuratron.create_linear_model(input, ouput)
@@ -35,5 +35,5 @@ inputs = [
 
 
 expected_outputs = [0, 0, 1, 1]
-model = TronLinearModel.new(inputs)
-pp model.train
+model = Neuratron::LinearModel.new(2, 1)
+# pp model.train
