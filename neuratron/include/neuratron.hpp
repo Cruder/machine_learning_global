@@ -2,7 +2,13 @@
 #define __NEURATRON_H__
 
 extern "C" {
-  int give_42();
+  struct Foo {
+    int* array;
+    int size;
+  };
+
+  struct Foo* init_foo();
+  int* give_42();
 }
 
 #endif // __NEURATRON_H__
