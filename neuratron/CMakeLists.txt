@@ -5,4 +5,4 @@ include_directories(${neuratron_SOURCE_DIR}/include)
 
 add_library(neuratron SHARED src/neuratron.cpp include/neuratron.hpp)
 
-install(TARGETS neuratron DESTINATION usr/lib)
+install(TARGETS neuratron DESTINATION lib)
