@@ -62,4 +62,16 @@ extern "C" {
     // Eigen::VectorXf w = model.inputs;
     return true;
   }
+
+  double predict_linear_model(struct LinearModel* model, double* input) {
+    double result = 0;
+
+
+    result += model->inputs[0];
+    for(int i = 0; i < model->sizeInput; ++i) {
+      result += model->inputs[i + 1] * input[i];
+    }
+
+    return result;
+  }
 }
