@@ -9,4 +9,4 @@ export LD_LIBRARY_PATH
 cd ../../
 
 cd matrix
-crystal build src/matrix.cr
+crystal build --release src/matrix.cr
