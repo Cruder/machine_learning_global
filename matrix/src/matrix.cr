@@ -31,13 +31,17 @@ module Neuratron
 end
 
 inputs = [
-  [0.0, 0.0],
-  [1.0, 0.0],
-  [1.0, 1.0],
-  [0.0, 1.0]
+  [1.0, 2.0],
+  [3.0, 4.0],
+  [5.0, 5.0],
+  # [6.0, 6.0],
 ]
-expected_outputs = [[0], [0], [1], [1]]
-w = [-0.2, 0.5, 0.8]
+expected_outputs = [
+  [2],
+  [3],
+  [1],
+  # [40],
+]
 
 model = Neuratron::LinearModel.new(2, 1)
 pp model.train(input, ouput, w)
