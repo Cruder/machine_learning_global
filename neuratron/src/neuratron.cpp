@@ -65,6 +65,7 @@ extern "C" {
 
   int free_model(LinearModel* model) {
     delete[] model->inputs;
+    delete model;
     return 0;
   }
 }
