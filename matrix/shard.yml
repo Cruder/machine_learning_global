@@ -1,0 +1,13 @@
+name: matrix
+version: 0.1.0
+
+authors:
+  - Alexandre Lairan <lairana@free.fr>
+
+targets:
+  matrix:
+    main: src/matrix.cr
+
+crystal: 0.31.1
+
+license: MIT
