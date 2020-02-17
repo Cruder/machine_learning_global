@@ -3,23 +3,37 @@ lib LibNeuratron
   @[Extern]
   struct LinearModel
     inputs: Float64*
-    size_inputs: Int32
+    size_input: Int32
+    size_output: Int32
   end
 
-  fun create_linear_model(inputs : Float64*, size: Int32) : Pointer(LinearModel)
+  fun create_linear_model(input : Int32, size: Int32) : Pointer(LinearModel)
   fun train_linear_model = train_linear_model(i : Int32) : Int32
 end
 
-class TronLinearModel
-  @model: LibNeuratron::LinearModel
-  def initialize(inputs : Array(Float64))
-    @model = LibNeuratron.create_linear_model(inputs, inputs.size).value
+
+module Neuratron
+  class LinearModel
+    @model : LinearModel*
+
+    def initialize(@input : Int32, @ouput : Int32)
+      @model = LibNeuratron.create_linear_model(input, ouput)
+    end
+
+    def model
+      @model.value
+    end
   end
 end
-inputs = [  0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0  ]
+
+inputs = [
+  [0.0, 0.0],
+  [1.0, 0.0],
+  [1.0, 1.0],
+  [0.0, 1.0]
+]
+
+
 expected_outputs = [0, 0, 1, 1]
 model = TronLinearModel.new(inputs)
-# pp LibLibrary.train_linear_model(10)
+pp model.train
