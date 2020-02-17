@@ -1,0 +1,6 @@
+version: 1.0
+shards:
+  aquaplot:
+    github: crystal-data/aquaplot
+    commit: 231103ca21121807274713cde7355cefc6eeb9fb
+

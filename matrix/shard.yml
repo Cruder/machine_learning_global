@@ -11,3 +11,7 @@ targets:
 crystal: 0.33.0
 
 license: MIT
+
+dependencies:
+  aquaplot:
+    github: crystal-data/aquaplot
