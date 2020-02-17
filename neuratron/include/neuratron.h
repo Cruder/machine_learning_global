@@ -1,14 +1,13 @@
 #ifndef __NEURATRON_H__
 #define __NEURATRON_H__
 
-struct Foo {
-  int* array;
-  int size;
-};
+extern "C" {
+  struct LinearModel{
+      double* inputs;
+      int sizeInputs;
+  };
 
-extern int init_bar();
-extern struct Foo* init_foo();
-extern int* give_42();
-
+  extern struct LinearModel* create_linear_model(const double *inputs, int size_inputs);
+}
 
 #endif // __NEURATRON_H__
