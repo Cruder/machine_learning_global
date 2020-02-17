@@ -1,1 +1,3 @@
 neuratron/build
+.idea/
+neuratron/cmake-build-debug
