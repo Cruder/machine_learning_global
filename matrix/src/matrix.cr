@@ -2,12 +2,6 @@ require "aquaplot"
 
 @[Link("neuratron")]
 lib LibNeuratron
-  @[Extern]
-  struct LinearModel
-    inputs: Float64*
-    size_input: Int32
-    size_output: Int32
-  end
 
   @[Extern]
   struct DeepModel
@@ -15,6 +9,16 @@ lib LibNeuratron
     x : Float64**
     w : Float64***
     d : Int32*
+  end
+
+  fun create_deep_model(neurons_per_layers : Int32*, size : Int32) : Pointer(DeepModel);
+
+
+  @[Extern]
+  struct LinearModel
+    inputs: Float64*
+    size_input: Int32
+    size_output: Int32
   end
 
   fun create_linear_model(input : Int32, size: Int32) : Pointer(LinearModel)
@@ -72,3 +76,7 @@ module Neuratron
     end
   end
 end
+
+neurons_per_layers = [2,3,1]
+model = LibNeuratron.create_deep_model(neurons_per_layers, neurons_per_layers.size).value
+pp model
