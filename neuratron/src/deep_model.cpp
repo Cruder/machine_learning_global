@@ -6,6 +6,39 @@
 
 // std::srand(std::time(nullptr));
 
+
+void calculus_regression_delta_last_layer(struct DeepModel* model, double* output){
+    int count_neuron_last_layer = model->d[model->layer_count-1];
+    for(int i = 0; i < count_neuron_last_layer; i++){
+        model->deltas[count_neuron_last_layer][i] = model->x[count_neuron_last_layer][i] - output[i];
+    }
+}
+
+void calculus_classification_delta_last_layer(struct DeepModel* model, double* output){
+    int count_neuron_last_layer = model->d[model->layer_count-1];
+    for(int i = 0; i < count_neuron_last_layer; i++){
+        const double output_Lj = model->x[count_neuron_last_layer][i];
+        model->deltas[count_neuron_last_layer][i] = (1 - output_Lj*output_Lj) * (output_Lj - output[i]);
+    }
+}
+
+void calculus_delta_layers(struct DeepModel* model){
+    for(int layer_l = model->layer_count; layer_l > 0; layer_l--){
+        for(int i_neuron = 1 ; i_neuron < model->d[layer_l-1]; i_neuron++){
+            double sigma_w_delta = 0.;
+            for(int j_neuron = 1; j_neuron < model->d[layer_l]; j_neuron++){
+                const double delta_l_j = model->deltas[layer_l][j_neuron];
+                const double weight_l_ij = model->w[layer_l-1][i_neuron][j_neuron];
+                sigma_w_delta+= delta_l_j * weight_l_ij;
+            }
+            double output_layer_of_i_neuron = model->x[layer_l-1][i_neuron];
+            double delta_layer_of_i_neuron = (1 - output_layer_of_i_neuron * output_layer_of_i_neuron) * sigma_w_delta;
+            model->deltas[layer_l][i_neuron] = delta_layer_of_i_neuron;
+        }
+    }
+}
+
+
 extern "C"{
     struct DeepModel* create_deep_model(int* neurons_per_layers, int size) {
         struct DeepModel* model = new DeepModel;
@@ -36,7 +69,49 @@ extern "C"{
         return model;
     }
 
-    bool train_deep_model(struct DeepModel* model, double* input, int input_size, double* output, int output_size) {
+    bool train_deep_regression_model(struct DeepModel* model, double* input, int input_size, double* output, int output_size) {
+        int size_input_layer = model->d[0];
+        int size_output_layer = model->d[model->layer_count-1];
+        int example_counts = input_size / size_input_layer;
+        int example_expected_result = output_size / size_output_layer;
+        std::cout << "var helper" << std::endl;
+        for(int i = 0 ; i < example_counts; i++){
+            double* example_input = new double[size_input_layer];
+            double* example_output = new double[size_output_layer];
+            std::cout << "select range input/output for iteration" << std::endl;
+            for(int k = 0 ; k < size_input_layer; k++)
+                example_input[k] = input[i*size_input_layer+k];
+            for(int k = 0 ; k < size_output_layer; k++)
+                example_output[k] = output[i*size_output_layer+k];
+            // predict_deep_model_xxx(model, example_input, size_input_layer)
+//            calculus_regression_delta_last_layer(model, output);
+//            calculus_delta_layers(model);
+            delete example_input;
+            delete example_output;
+        }
+        return true;
+    }
+
+    bool train_deep_classification_model(struct DeepModel* model, double* input, int input_size, double* output, int output_size) {
+        int size_input_layer = model->d[0];
+        int size_output_layer = model->d[model->layer_count-1];
+        int example_counts = input_size / size_input_layer;
+        int example_expected_result = output_size / size_output_layer;
+        std::cout << "var helper" << std::endl;
+        for(int i = 0 ; i < example_counts; i++){
+            double* example_input = new double[size_input_layer];
+            double* example_output = new double[size_output_layer];
+            std::cout << "select range input/output for iteration" << std::endl;
+            for(int k = 0 ; k < size_input_layer; k++)
+                example_input[k] = input[i*size_input_layer+k];
+            for(int k = 0 ; k < size_output_layer; k++)
+                example_output[k] = output[i*size_output_layer+k];
+            // predict_deep_model_xxx(model, example_input, size_input_layer)
+//            calculus_classification_delta_last_layer(model, output);
+//            calculus_delta_layers(model);
+            delete example_input;
+            delete example_output;
+        }
         return true;
     }
 
