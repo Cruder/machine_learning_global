@@ -37,7 +37,7 @@ module Neuratron
     end
 
     def predict(input, kind = Regression.new)
-      kind.predict(@model, input)
+      kind.predict(@model, input.to_unsafe)
     end
   end
 end
