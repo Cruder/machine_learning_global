@@ -1,7 +1,7 @@
 require "./spec_helper"
 
 describe Neuratron::LinearModel do
-  it "with 4 exemples" do
+  it "linear classification" do
     inputs = [
       [1.0, 2.0],
       [3.0, 4.0],
@@ -14,30 +14,13 @@ describe Neuratron::LinearModel do
       [-1.0],
       [-1.0],
     ]
-    model = Neuratron::LinearModel.new(2, 1)
-    model.train(inputs.flatten, expected_outputs.flatten)
-    predictions = inputs.map do |input|
-      puts "Predict for #{input}"
-      results = model.predict(input)
-      puts "Prediction #{results}"
-      results
-    end],
-      [3.0, 4.0],
-      [5.0, 5.0],
-      [6.0, 6.0],
-    ]
-    expected_outputs = [
-      [1.0],
-      [1.0],
-      [-1.0],
-      [-1.0],
-    ]
+
     model = Neuratron::LinearModel.new(2, 1)
     model.train(inputs.flatten, expected_outputs.flatten)
 
     predictions = inputs.map do |input|
       puts "Predict for #{input}"
-      results = model.predict(input)
+      results = model.predict(input, Neuratron::LinearModel::Classification.new)
       puts "Prediction #{results}"
       results
     end
