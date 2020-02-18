@@ -83,15 +83,15 @@ pp "positions", positions
 
 math_formulat = "#{model.weights[0]} * 1 + #{model.weights[1]} * x + #{model.weights[2]} * y"
 fns = [
-  AquaPlot::Scatter3D.from_points(positions),
+  AquaPlot::Scatter3D.from_points(positions).tap(&.set_title("Points")),
   AquaPlot::Function.new("0", title: "0"),
   AquaPlot::Function.new(math_formulat, title: math_formulat),
 ]
 
-pp fns[2].style = "pm3d"
+pp fns[-1].style = "pm3d"
 
 plt = AquaPlot::Plot3D.new fns
-# plt.set_view(100, 80, 1)
+plt.set_view(100, 80, 1)
 plt.set_key("left box")
 plt.show
 plt.close
