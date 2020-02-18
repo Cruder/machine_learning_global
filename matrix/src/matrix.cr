@@ -10,7 +10,15 @@ lib LibNeuratron
     d : Int32*
   end
 
-  fun create_deep_model(neurons_per_layers : Int32*, size : Int32) : Pointer(DeepModel);
+  fun create_deep_model(neurons_per_layers : Int32*, size : Int32) : DeepModel*
+  fun train_deep_model(
+    model : DeepModel*,
+    input : Float64*, input_size : Int32,
+    output : Float64*, output_size : Int32
+  ) : Bool
+  fun predict_deep_model_regression(model : DeepModel*, input : Float64*) : Float64
+  fun predict_deep_model_classification(model : DeepModel*, input : Float64*) : Float64
+  fun free_deep_model(model : DeepModel*) : Int32
 
   @[Extern]
   struct LinearModel
@@ -28,7 +36,7 @@ lib LibNeuratron
 
   fun predict_linear_model_regression(model : LinearModel*, input : Float64*) : Float64
   fun predict_linear_model_classification(model : LinearModel*, input : Float64*) : Float64
-  fun free_model(model : Pointer(LinearModel)) : Int32
+  fun free_linear_model(model : Pointer(LinearModel)) : Int32
 end
 
 module Neuratron
@@ -52,7 +60,7 @@ module Neuratron
     end
 
     def finalize
-      LibNeuratron.free_model(@model)
+      LibNeuratron.free_linear_model(@model)
     end
 
     def model

@@ -30,4 +30,20 @@ extern "C"{
         }
         return model;
     }
+
+    bool train_deep_model(struct DeepModel* model, double* input, int input_size, double* output, int output_size) {
+        return true;
+    }
+
+    double predict_deep_model_regression(struct DeepModel* model, double* input) {
+        return 0.0;
+    }
+
+    double predict_deep_model_classification(struct DeepModel* model, double* input) {
+        return 0.0;
+    }
+
+    int free_deep_model(DeepModel* model) {
+        return 0;
+    }
 }
