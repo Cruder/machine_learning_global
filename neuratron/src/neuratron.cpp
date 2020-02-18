@@ -63,7 +63,7 @@ extern "C" {
     return true;
   }
 
-  double predict_linear_model(struct LinearModel* model, double* input) {
+  double predict_linear_model_regression(struct LinearModel* model, double* input) {
     double result = 0;
 
 
@@ -74,6 +74,13 @@ extern "C" {
 
     return result;
   }
+
+  double predict_linear_model_classification(struct LinearModel* model, double* input) {
+    double result = predict_linear_model_regression(model, input);
+
+    return result > 0 ? 1.0 : -1.0;
+  }
+
 
   int free_model(LinearModel* model) {
     delete[] model->inputs;

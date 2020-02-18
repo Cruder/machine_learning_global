@@ -24,7 +24,8 @@ lib LibNeuratron
     output : Float64*, output_size : Int32
   ) : Bool
 
-  fun predict_linear_model(model : LinearModel*, input : Float64*) : Float64
+  fun predict_linear_model_regression(model : LinearModel*, input : Float64*) : Float64
+  fun predict_linear_model_classification(model : LinearModel*, input : Float64*) : Float64
   fun free_model(model : Pointer(LinearModel)) : Int32
 end
 
@@ -32,13 +33,13 @@ module Neuratron
   class LinearModel
     class Regression
       def predict(model, input)
-        LibNeuratron.predict_linear_model(model, input)
+        LibNeuratron.predict_linear_model_regression(model, input)
       end
     end
 
     class Classification
       def predict(model, input)
-        LibNeuratron.predict_linear_model(model, input)
+        LibNeuratron.predict_linear_model_classification(model, input)
       end
     end
 
