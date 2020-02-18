@@ -44,6 +44,22 @@ extern "C"{
     }
 
     int free_deep_model(DeepModel* model) {
+        for (size_t i = 0; i < model->layer_count; i++) {
+            const int size_layer = neurons_per_layers[i];
+            for (size_t j = 0; j < model->size_layer; j++) {
+                delete[] model->w[i][j];
+            }
+            delete[] model->delta[i];
+            delete[] model->x[i];
+            if (i != model->layer_count - 1) {
+                delete[] model->w[i];
+            }
+        }
+        delete[] model->d;
+        delete[] model->delta;
+        delete[] model->x;
+        delete[] model->w;
+        delete model;
         return 0;
     }
 }
