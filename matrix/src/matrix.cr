@@ -91,7 +91,8 @@ fns = [
 pp fns[-1].style = "pm3d"
 
 plt = AquaPlot::Plot3D.new fns
-plt.set_view(100, 80, 1)
 plt.set_key("left box")
+plt.show
+plt.set_view(100, 80, 1)
 plt.show
 plt.close
