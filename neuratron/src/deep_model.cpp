@@ -4,11 +4,12 @@
 #include <iostream>
 #include <ctime>
 
-std::srand(std::time(nullptr));
+// std::srand(std::time(nullptr));
 
 extern "C"{
     struct DeepModel* create_deep_model(int* neurons_per_layers, int size) {
         struct DeepModel* model = new DeepModel;
+        model->layer_count = size;
         model->d = new int[size];
         model->deltas = new double*[size];
         model->x = new double*[size];
@@ -49,18 +50,18 @@ extern "C"{
 
     int free_deep_model(DeepModel* model) {
         for (size_t i = 0; i < model->layer_count; i++) {
-            const int size_layer = neurons_per_layers[i];
-            for (size_t j = 0; j < model->size_layer; j++) {
+            const int size_layer = model->d[i];
+            for (size_t j = 0; j < size_layer; j++) {
                 delete[] model->w[i][j];
             }
-            delete[] model->delta[i];
+            delete[] model->deltas[i];
             delete[] model->x[i];
             if (i != model->layer_count - 1) {
                 delete[] model->w[i];
             }
         }
         delete[] model->d;
-        delete[] model->delta;
+        delete[] model->deltas;
         delete[] model->x;
         delete[] model->w;
         delete model;
