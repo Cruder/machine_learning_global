@@ -1,6 +1,10 @@
 #include "neuratron.h"
-#include <stdlib.h>
 #include <Eigen/Dense>
+#include <cstdlib>
+#include <iostream>
+#include <ctime>
+
+std::srand(std::time(nullptr));
 
 extern "C"{
     struct DeepModel* create_deep_model(int* neurons_per_layers, int size) {
