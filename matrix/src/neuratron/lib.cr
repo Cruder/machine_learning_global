@@ -10,7 +10,7 @@ lib LibNeuratron
   end
 
   fun create_deep_model(neurons_per_layers : Int32*, size : Int32) : DeepModel*
-  fun train_deep_model(
+  fun train_deep_regression_model(
     model : DeepModel*,
     input : Float64*, input_size : Int32,
     output : Float64*, output_size : Int32
