@@ -10,7 +10,7 @@ module Neuratron
       initialize(layers.to_a)
     end
 
-    def train_regression(input, output)
+    def train_regression(input, output, iteration)
         zip_original = inputs.zip(outputs).map { |input, output| [input, output] }
         (1..iteration).each {
             shuffled_inputs, shuffled_outputs = shuffle_dataset(zip_original)
