@@ -38,6 +38,12 @@ void calculus_delta_layers(struct DeepModel* model){
     }
 }
 
+void print_a(const double* array, size_t size){
+    for(size_t i = 0 ; i < size; i++)
+        std::cout << array[i] << " ";
+    std::cout << std::endl;
+}
+
 
 extern "C"{
     struct DeepModel* create_deep_model(int* neurons_per_layers, int size) {
@@ -70,8 +76,8 @@ extern "C"{
     }
 
     bool train_deep_regression_model(struct DeepModel* model, double* input, int input_size, double* output, int output_size) {
-        int size_input_layer = model->d[0];
-        int size_output_layer = model->d[model->layer_count-1];
+        int size_input_layer = model->d[0] - 1;
+        int size_output_layer = model->d[model->layer_count-1] - 1;
         int example_counts = input_size / size_input_layer;
         int example_expected_result = output_size / size_output_layer;
         std::cout << "var helper" << std::endl;
@@ -93,8 +99,8 @@ extern "C"{
     }
 
     bool train_deep_classification_model(struct DeepModel* model, double* input, int input_size, double* output, int output_size) {
-        int size_input_layer = model->d[0];
-        int size_output_layer = model->d[model->layer_count-1];
+        int size_input_layer = model->d[0] - 1;
+        int size_output_layer = model->d[model->layer_count-1] - 1;
         int example_counts = input_size / size_input_layer;
         int example_expected_result = output_size / size_output_layer;
         std::cout << "var helper" << std::endl;
