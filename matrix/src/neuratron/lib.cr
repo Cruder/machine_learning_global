@@ -20,7 +20,7 @@ lib LibNeuratron
     input : Float64*, input_size : Int32,
     output : Float64*, output_size : Int32
   ) : Bool
-  fun predict_deep_model_regression(model : DeepModel*, input : Float64*) : Float64
+  fun predict_deep_model_regression(model : DeepModel*, input : Float64*) : Float64*
   fun predict_deep_model_classification(model : DeepModel*, input : Float64*) : Float64
   fun free_deep_model(model : DeepModel*) : Int32
 
