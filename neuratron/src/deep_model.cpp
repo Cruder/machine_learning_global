@@ -25,11 +25,11 @@ extern "C"{
                 model->x[i] = new double[size_layer];
             }
         }
-        const int size_last_layer = neurons_per_layers[size - 1];
+        const int size_last_layer = neurons_per_layers[size - 1] + 1;
         model->d[size - 1] = size_last_layer;
         model->deltas[size - 1] = new double[size_last_layer];
         for (int j = 0; j < size_last_layer; j++) {
-            model->x[j] = new double[size_last_layer + 1];
+            model->x[j] = new double[size_last_layer];
 
         }
         return model;
