@@ -27,7 +27,7 @@ extern "C"{
         for (int j = 0; j < size_last_layer; j++) {
             model->x[j] = new double[size_last_layer + 1];
 
-            return model;
         }
+        return model;
     }
 }
