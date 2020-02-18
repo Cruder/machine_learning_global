@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <ctime>
+#include <cmath>
+#include <vector>
 
 // std::srand(std::time(nullptr));
 
@@ -40,8 +42,83 @@ extern "C"{
         return true;
     }
 
-    double predict_deep_model_regression(struct DeepModel* model, double* input) {
-        return 0.0;
+
+    // struct DeepModel{
+    //     int layer_count;
+    //     double*** w;
+    //     double** x;
+    //     double** deltas;
+    //     int* d;
+    // };
+
+    void generate_xs_model(struct DeepModel* model, double* input, std::vector<Eigen::MatrixXd>& matrices) {
+        Eigen::MatrixXd x0(1, model->d[0]);
+
+        x0(0, 0) = 1;
+        for(int i = 0; i < model->d[0] - 1; ++i) {
+            x0(0, i + 1) = input[i];
+        }
+
+        std::cout << "x0" << std::endl << x0 << std::endl;
+
+        std::cout << "Map from <=> to : " << model->d[0] << " <=> " << model->d[1] << std::endl;
+
+        // Setup w0
+        Eigen::MatrixXd w0(model->d[0], model->d[1]);
+
+        for(int i = 0; i < model->d[0]; ++i) {
+            for(int j = 0; j < model->d[1]; ++j) {
+                w0(i, j) = model->w[0][i][j];
+            }
+        }
+
+        std::cout << "w0" << std::endl << w0 << std::endl;
+        // End Setup w0
+
+        // Setup x1
+        Eigen::MatrixXd x1 = x0 * w0;
+        x1(0, 0) = 1;
+        std::cout << "x1" << std::endl << x1 << std::endl;
+        // End Setup x1
+
+        std::cout << "Map from <=> to : " << model->d[1] << " <=> " << model->d[2] << std::endl;
+
+
+        // Setup w1
+        Eigen::MatrixXd w1(model->d[1], model->d[2]);
+
+        for(int i = 0; i < model->d[1]; ++i) {
+            for(int j = 0; j < model->d[2]; ++j) {
+                w1(i, j) = model->w[1][i][j];
+            }
+        }
+
+        std::cout << "w1" << std::endl << w1 << std::endl;
+        // End Setup w1
+
+        // Setup x2
+        Eigen::MatrixXd x2 = x1 * w1;
+        x2(0, 0) = 1;
+        std::cout << "x2" << std::endl << x2 << std::endl;
+        // End Setup x2
+
+        matrices.push_back(x0);
+        matrices.push_back(x1);
+        matrices.push_back(x2);
+    }
+
+    double* predict_deep_model_regression(struct DeepModel* model, double* input) {
+        int output_size = model->d[model->layer_count - 1] - 1;
+
+        std::vector<Eigen::MatrixXd> matrices {};
+        generate_xs_model(model, input, matrices);
+
+        double* results = new double[output_size];
+        auto matrix = matrices[matrices.size() -1];
+
+        Eigen::Map<Eigen::MatrixXd>(results, matrix.rows(), matrix.cols()) = matrix;
+
+        return results;
     }
 
     double predict_deep_model_classification(struct DeepModel* model, double* input) {
