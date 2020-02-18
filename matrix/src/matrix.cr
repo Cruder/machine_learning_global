@@ -2,7 +2,6 @@ require "aquaplot"
 
 @[Link("neuratron")]
 lib LibNeuratron
-
   @[Extern]
   struct DeepModel
     deltas : Float64**
@@ -12,7 +11,6 @@ lib LibNeuratron
   end
 
   fun create_deep_model(neurons_per_layers : Int32*, size : Int32) : Pointer(DeepModel);
-
 
   @[Extern]
   struct LinearModel
@@ -75,8 +73,16 @@ module Neuratron
       kind.predict(@model, input)
     end
   end
-end
 
-neurons_per_layers = [2,3,1]
-model = LibNeuratron.create_deep_model(neurons_per_layers, neurons_per_layers.size).value
-pp model
+  class DeepModel
+    @model : LibNeuratron::DeepModel*
+
+    def initialize(layers)
+      @model = LibNeuratron.create_deep_model(layers.to_unsafe, layers.size)
+    end
+
+    def initialize(*layers : Int)
+      initialize(layers.to_a)
+    end
+  end
+end
