@@ -11,11 +11,36 @@ module Neuratron
     end
 
     def train_regression(input, output)
-      LibNeuratron.train_deep_regression_model(@model, input.to_unsafe, input.size, output.to_unsafe, output.size)
+        zip_original = inputs.zip(outputs).map { |input, output| [input, output] }
+        (1..iteration).each {
+            shuffled_inputs, shuffled_outputs = shuffle_dataset(zip_original)
+            went_well = LibNeuratron.train_deep_regression_model(@model, input.to_unsafe, input.size, output.to_unsafe, output.size)
+            false if !went_well
+        }
     end
 
-    def train_classification(input, output)
-      LibNeuratron.train_deep_classification_model(@model, input.to_unsafe, input.size, output.to_unsafe, output.size)
+    def shuffle_dataset(zipped_dataset)
+        zip_shuffled = zipped_dataset.shuffle
+        shuffled_inputs = zip_shuffled.map do |input_output|
+            input_output[0]
+        end.flatten
+        shuffled_outputs = zip_shuffled.map do |input_output|
+            input_output[1]
+        end.flatten
+#        pp shuffled_inputs
+#        pp shuffled_outputs
+        {shuffled_inputs, shuffled_outputs}
+    end
+
+    def train_classification(inputs, outputs, iteration)
+        zip_original = inputs.zip(outputs).map { |input, output| [input, output] }
+        (1..iteration).each {
+            shuffled_inputs, shuffled_outputs = shuffle_dataset(zip_original)
+
+            went_well = LibNeuratron.train_deep_classification_model(@model, shuffled_inputs.to_unsafe, shuffled_inputs.size, shuffled_outputs.to_unsafe, shuffled_outputs.size)
+
+        }
+        true
     end
   end
 end
