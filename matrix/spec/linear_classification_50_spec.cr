@@ -1,7 +1,7 @@
 require "./spec_helper"
 
 describe Neuratron::LinearModel do
-  it "with 50 exemples" do
+  it "linear classification" do
     inputs = [
       [1.0, 2.0],
       [1.5, 2.5],
@@ -89,90 +89,78 @@ describe Neuratron::LinearModel do
       [6.95, 6.86],
     ]
     expected_outputs = [
-      [2.0],
-      [2.5],
-      [3.0],
-      [3.5],
-      [3.2],
-      [3.5],
-      [2.1],
-      [1.8],
-      [1.5],
-      [1.3],
+      [1.0],
+      [1.0],
+      [-1.0],
+      [-1.0],
+      [1.0],
+      [1.0],
+      [-1.0],
+      [-1.0],
+      [1.0],
+      [-1.0],
 
-      [1.2],
-      [1.1],
-      [40.0],
-      [-4.82],
-      [-5.87],
-      [-6.08],
-      [-9.59],
-      [-8.18],
-      [-12.07],
-      [-12.58],
+      [1.0],
+      [1.0],
+      [-1.0],
+      [-1.0],
+      [1.0],
+      [1.0],
+      [-1.0],
+      [-1.0],
+      [1.0],
+      [-1.0],
 
-      [1.17],
-      [1.80],
-      [-0.37],
-      [-4.31],
-      [-5.79],
-      [-6.99],
-      [-5.80],
-      [-10.70],
-      [3.83],
-      [4.67],
+      [1.0],
+      [1.0],
+      [-1.0],
+      [-1.0],
+      [1.0],
+      [1.0],
+      [-1.0],
+      [-1.0],
+      [1.0],
+      [-1.0],
 
-      [1.79],
-      [-0.67],
-      [-0.57],
-      [-2.11],
-      [-4.40],
-      [-7.28],
-      [9.23],
-      [6.84],
-      [5.39],
-      [3.72],
+      [1.0],
+      [1.0],
+      [-1.0],
+      [-1.0],
+      [1.0],
+      [1.0],
+      [-1.0],
+      [-1.0],
+      [1.0],
+      [-1.0],
 
-      [2.48],
-      [2.86],
-      [-1.33],
-      [-3.62],
-      [10.90],
-      [8.85],
-      [8.47],
-      [5.64],
-      [5.20],
-      [5.01],
+      [1.0],
+      [1.0],
+      [-1.0],
+      [-1.0],
+      [1.0],
+      [1.0],
+      [-1.0],
+      [-1.0],
+      [1.0],
+      [-1.0],
 
-      [2.13],
-      [3.25],
-      [14.16],
-      [15.66],
-      [12.61],
-      [12.08],
-      [8.48],
-      [7.56],
-      [7.28],
-      [5.82],
+      [1.0],
+      [1.0],
+      [-1.0],
+      [-1.0],
+      [1.0],
+      [1.0],
+      [-1.0],
+      [-1.0],
+      [1.0],
+      [-1.0],
 
-      [18.18],
-      [16.79],
-      [15.15],
-      [16.65],
-      [11.96],
-      [12.33],
-      [9.99],
-      [7.88],
-      [22.24],
-      [19.95],
-
-      [19.93],
-      [17.11],
-      [16.59],
-      [13.81],
-      [12.27],
-      [12.29],
-      [12.28],
+      [1.0],
+      [1.0],
+      [-1.0],
+      [-1.0],
+      [1.0],
+      [1.0],
     ]
 
     model = Neuratron::LinearModel.new(2, 1)
@@ -180,25 +168,25 @@ describe Neuratron::LinearModel do
 
     predictions = inputs.map do |input|
       puts "Predict for #{input}"
-      results = model.predict(input)
+      results = model.predict(input, Neuratron::LinearModel::Classification.new)
       puts "Prediction #{results}"
       results
     end
 
     positions = inputs.zip(predictions).map do |data|
-      { data[0][0], data[0][1],  data[1] }
+      { data[0][0], data[0][1], data[1] }
     end
 
     pp "positions", positions
 
     math_formulat = "#{model.weights[0]} * 1 + #{model.weights[1]} * x + #{model.weights[2]} * y"
     fns = [
-      AquaPlot::Function.new("0", title: "0"),
-      AquaPlot::Function.new(math_formulat, title: math_formulat),
       AquaPlot::Scatter3D.from_points(positions).tap(&.set_title("Points")),
+      AquaPlot::Function.new("0", title: "0"),
+      # AquaPlot::Function.new(math_formulat, title: math_formulat),
     ]
 
-    pp fns[1].style = "pm3d"
+    pp fns[-1].style = "pm3d"
 
     plt = AquaPlot::Plot3D.new fns
     plt.set_key("left box")
@@ -206,9 +194,5 @@ describe Neuratron::LinearModel do
     plt.set_view(100, 80, 1)
     plt.show
     plt.close
-  end
-
-  it "when inputs are not distincts" do
-
   end
 end
