@@ -4,6 +4,7 @@
 extern "C" {
 
     struct DeepModel{
+        int layer_count;
         double*** w;
         double** x;
         double** deltas;
