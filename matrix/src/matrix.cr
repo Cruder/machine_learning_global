@@ -28,6 +28,10 @@ module Neuratron
       @model = LibNeuratron.create_linear_model(input_size, ouput_size)
     end
 
+    def finalize
+      LibNeuratron.free_model(@model)
+    end
+
     def model
       @model.value
     end
@@ -44,10 +48,6 @@ module Neuratron
 
     def predict(input)
       LibNeuratron.predict_linear_model(@model, input.to_unsafe)
-    end
-
-    def finalize
-      LibNeuratron.free_model(@model)
     end
   end
 end
@@ -67,7 +67,6 @@ expected_outputs = [
 
 model = Neuratron::LinearModel.new(2, 1)
 model.train(inputs.flatten, expected_outputs.flatten)
-pp model.weights
 
 predictions = inputs.map do |input|
   puts "Predict for #{input}"
@@ -76,25 +75,23 @@ predictions = inputs.map do |input|
   results
 end
 
-pp predictions
-
 positions = inputs.zip(predictions).map do |data|
-  { data[1], data[0][1], data[0][0] }
+  { data[0][0], data[0][1],  data[1] }
 end
 
 pp "positions", positions
 
-
-math_formulat = "#{model.weights[0]}x + #{model.weights[1]}y + #{model.weights[2]}"
-puts "math_formulat #{math_formulat}"
+math_formulat = "#{model.weights[0]} * 1 + #{model.weights[1]} * x + #{model.weights[2]} * y"
 fns = [
-  AquaPlot::Function.new("#{model.weights[0]} * x + #{model.weights[1]} * y + #{model.weights[2]}", title: "regression"),
-  AquaPlot::Scatter3D.from_points(positions)
+  AquaPlot::Scatter3D.from_points(positions),
+  AquaPlot::Function.new("0", title: "0"),
+  AquaPlot::Function.new(math_formulat, title: math_formulat),
 ]
 
-pp fns[0].style = "pm3d"
+pp fns[2].style = "pm3d"
 
 plt = AquaPlot::Plot3D.new fns
+# plt.set_view(100, 80, 1)
 plt.set_key("left box")
 plt.show
 plt.close
