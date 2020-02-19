@@ -230,7 +230,7 @@ extern "C"{
         std::vector<Eigen::MatrixXd> matrices {};
         generate_xs_model(model, input, matrices);
 
-        double* results = new double[output_size];
+        double* results = new double[output_size + 1];
         auto matrix = matrices[matrices.size() -1];
 
         Eigen::Map<Eigen::MatrixXd>(results, matrix.rows(), matrix.cols()) = matrix;
