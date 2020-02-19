@@ -61,26 +61,33 @@ void calculus_classification_delta_last_layer(struct DeepModel* model, double* o
 }
 
 void update_weights_matrix(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const std::vector<Eigen::MatrixXd>& matDeltas, double learning_rate){
+    cout << "===== Start update weights matrix =====" << endl;
     const int last_layer = model->layer_count - 1;
     std::vector<Eigen::MatrixXd> new_weights(model->layer_count-1);
     auto current_weights = std::vector<Eigen::MatrixXd>{};
     deep_model_to_weights_matrice(model, current_weights);
-    for(int layer = 1 ; layer < last_layer; layer++){
+    for(int layer = 1 ; layer < last_layer + 1; layer++){
         const auto old_layer_weight = current_weights[layer - 1];
         const auto layer_delta = matDeltas[layer];
         const auto layer_output = matXs[layer-1];
         Eigen::MatrixXd new_layer_weight(old_layer_weight.rows(), old_layer_weight.cols());
-        new_layer_weight = old_layer_weight - learning_rate * layer_output * layer_delta;
+        cout << "old_layer_weight(" << old_layer_weight.rows() << ", " << old_layer_weight.cols() << ")" << endl;
+        cout << "layer_output(" << layer_output.rows() << ", " << layer_output.cols() << ")" << endl;
+        cout << "layer_delta(" << layer_delta.rows() << ", " << layer_delta.cols() << ")" << endl;
+        new_layer_weight = old_layer_weight - learning_rate * layer_output.transpose() * layer_delta.transpose();
         new_weights[layer-1] = new_layer_weight;
     }
-    for(int layer = 1; layer < last_layer; layer++){
-        const auto layer_weight = new_weights[layer];
+    cout << "start editing model weight" << endl;
+    for(int layer = 1; layer < last_layer + 1; layer++){
+        const auto layer_weight = new_weights[layer-1];
         for(int neuron_i = 0; neuron_i < model->d[layer-1]; neuron_i++)
             for(int neuron_j = 0; neuron_j < model->d[layer]; neuron_j++){
                 model->w[layer-1][neuron_i][neuron_j] = layer_weight(neuron_i, neuron_j);
             }
     }
-}
+    cout << "===== end update weights matrix =====" << endl;
+//    print_weights(model);
+}s
 
 void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const Eigen::MatrixXd& matY, double learning_rate){
     const int last_layer = model->layer_count - 1;
