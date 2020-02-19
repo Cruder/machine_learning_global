@@ -60,7 +60,29 @@ void calculus_classification_delta_last_layer(struct DeepModel* model, double* o
     }
 }
 
-void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const Eigen::MatrixXd& matY){
+void update_weights_matrix(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const std::vector<Eigen::MatrixXd>& matDeltas, double learning_rate){
+    const int last_layer = model->layer_count - 1;
+    std::vector<Eigen::MatrixXd> new_weights(model->layer_count-1);
+    auto current_weights = std::vector<Eigen::MatrixXd>{};
+    deep_model_to_weights_matrice(model, current_weights);
+    for(int layer = 1 ; layer < last_layer; layer++){
+        const auto old_layer_weight = current_weights[layer - 1];
+        const auto layer_delta = matDeltas[layer];
+        const auto layer_output = matXs[layer-1];
+        Eigen::MatrixXd new_layer_weight(old_layer_weight.rows(), old_layer_weight.cols());
+        new_layer_weight = old_layer_weight - learning_rate * layer_output * layer_delta;
+        new_weights[layer-1] = new_layer_weight;
+    }
+    for(int layer = 1; layer < last_layer; layer++){
+        const auto layer_weight = new_weights[layer];
+        for(int neuron_i = 0; neuron_i < model->d[layer-1]; neuron_i++)
+            for(int neuron_j = 0; neuron_j < model->d[layer]; neuron_j++){
+                model->w[layer-1][neuron_i][neuron_j] = layer_weight(neuron_i, neuron_j);
+            }
+    }
+}
+
+void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const Eigen::MatrixXd& matY, double learning_rate){
     const int last_layer = model->layer_count - 1;
     std::vector<Eigen::MatrixXd> deltas(model->layer_count);
     cout << deltas.size() << endl;
@@ -93,6 +115,7 @@ void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::Matrix
         deltas[layer-1] = prev_layer_delta;
         std::cout << "Memory leak ?" << endl;
     }
+    update_weights_matrix(model, matXs, deltas, learning_rate);
  }
 
 void calculus_delta_layers(struct DeepModel* model){
