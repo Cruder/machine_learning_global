@@ -23,7 +23,8 @@ module Neuratron
     end
 
     def predict(input, kind = Regression.new)
-      kind.predict(@model, input)
+      result = kind.predict(@model, input)
+      Array.new(@model.value.d[@model.value.layer_count - 2]) { |i| result[i + 1] }
     end
 
     def train_regression(inputs, outputs, iteration)
