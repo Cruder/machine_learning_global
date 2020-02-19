@@ -156,7 +156,8 @@ extern "C"{
 
             std::cout << "w" << i << std::endl << wi << std::endl;
 
-            xi = xi * wi;
+            xi = (xi * wi);
+            xi = xi.unaryExpr([](double x){ return std::tanh(x); });
             xi(0, 0) = 1;
             matrices.push_back(xi);
 
