@@ -120,6 +120,7 @@ void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::Matrix
         // deltas.insert(std::begin(deltas) + layer, prev_layer_delta);
         deltas[layer-1] = prev_layer_delta;
     }
+    update_weights_matrix(model, matXs, deltas, learning_rate);
  }
 
  void calculus_classification_delta(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const Eigen::MatrixXd& matY){
