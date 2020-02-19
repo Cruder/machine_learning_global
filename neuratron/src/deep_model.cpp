@@ -104,12 +104,12 @@ void generate_xs_model(struct DeepModel* model, double* input, std::vector<Eigen
     }
 }
 
-void deep_weights_to_matrice(double*** w, int* sizes, int size, std::vector<Eigen::MatrixXd>& matrices) {
-    for (size_t i = 0; i < size - 1; i++) {
-        Eigen::MatrixXd matrice (sizes[i], sizes[i + 1]);
-        for (size_t a = 0; a < sizes[i]; a++) {
-            for (size_t b = 0; b < sizes[i + 1]; b++) {
-                matrice(a, b) = w[i][a][b];
+void deep_model_to_weights_matrice(DeepModel* model, std::vector<Eigen::MatrixXd>& matrices) {
+    for (size_t i = 0; i < model->layer_count - 1; i++) {
+        Eigen::MatrixXd matrice (model->d[i], model->d[i + 1]);
+        for (size_t a = 0; a < model->d[i]; a++) {
+            for (size_t b = 0; b < model->d[i + 1]; b++) {
+                matrice(a, b) = model->w[i][a][b];
             }
         }
         matrices.push_back(matrice);
