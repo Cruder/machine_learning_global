@@ -23,7 +23,7 @@ describe Neuratron::LinearModel do
     ]
 
     model = Neuratron::DeepModel.new(2, 1)
-    model.train_classification(inputs, expected_outputs.flatten, 1)
+    model.train_classification(inputs, expected_outputs, 2, 0.3)
 
     predictions = input_to_classify.map do |input|
       puts "Predict for #{input}"
