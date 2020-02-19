@@ -19,18 +19,23 @@ void print_a(const double* array, size_t size){
 }
 
 void calculus_regression_delta_last_layer(struct DeepModel* model, double* output){
-    int count_neuron_last_layer = model->d[model->layer_count-1]-1;
-    for(int i = 0; i < count_neuron_last_layer; i++){
-        model->deltas[model->layer_count-1][i] = model->x[count_neuron_last_layer][i] - output[i];
+    const int id_last_layer = model->layer_count - 1;
+    int count_neuron_last_layer = model->d[id_last_layer];
+    for(int i = 1; i < count_neuron_last_layer; i++){
+        model->deltas[id_last_layer][i] = model->x[id_last_layer][i] - output[i];
     }
 //    std::cout << "end calculus last layer" << std::endl;
 }
 
 void calculus_classification_delta_last_layer(struct DeepModel* model, double* output){
-    int count_neuron_last_layer = model->d[model->layer_count-1];
+    cout << "pp" << endl;
+    const int id_last_layer = model->layer_count - 1;
+    int count_neuron_last_layer = model->d[id_last_layer];
+    printf("l: %d, count_neurons: %d\n", id_last_layer, count_neuron_last_layer);
     for(int i = 1; i < count_neuron_last_layer; i++){
-        const double output_Lj = model->x[count_neuron_last_layer][i];
-        model->deltas[count_neuron_last_layer][i] = (1 - output_Lj*output_Lj) * (output_Lj - output[i]);
+        const double output_Lj = model->x[id_last_layer][i];
+        printf("neuron: %d\n", i);
+        model->deltas[id_last_layer][i] = (1 - output_Lj*output_Lj) * (output_Lj - output[i]);
     }
 }
 

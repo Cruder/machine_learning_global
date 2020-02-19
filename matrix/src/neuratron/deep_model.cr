@@ -27,11 +27,13 @@ module Neuratron
       Array.new(@model.value.d[@model.value.layer_count - 2]) { |i| result[i + 1] }
     end
 
-    def train_regression(inputs, outputs, iteration, training_rate)
+    def train_regression(inputs : Array(Array(Float64)), outputs : Array(Array(Float64)), iteration : Int32, training_rate : Float64)
         zip_original = inputs.zip(outputs).map { |input, output| [input, output] }
         (1..iteration).each {
             shuffled_inputs, shuffled_outputs = shuffle_dataset(zip_original)
-            went_well = LibNeuratron.train_deep_regression_model(@model, shuffled_inputs.to_unsafe, shuffled_inputs.size, shuffled_outputs.to_unsafe, shuffled_outputs.size, training_rate)
+            went_well = LibNeuratron.train_deep_regression_model(@model, shuffled_inputs.to_unsafe, shuffled_inputs.size,
+                            shuffled_outputs.to_unsafe, shuffled_outputs.size,
+                            training_rate)
             false if !went_well
         }
     end
@@ -53,8 +55,10 @@ module Neuratron
         zip_original = inputs.zip(outputs).map { |input, output| [input, output] }
         (1..iteration).each {
             shuffled_inputs, shuffled_outputs = shuffle_dataset(zip_original)
-            went_well = LibNeuratron.train_deep_classification_model(@model, shuffled_inputs.to_unsafe, shuffled_inputs.size, shuffled_outputs.to_unsafe, shuffled_outputs.size, training_rate)
-
+            went_well = LibNeuratron.train_deep_classification_model(@model,
+                            shuffled_inputs.to_unsafe, shuffled_inputs.size,
+                            shuffled_outputs.to_unsafe, shuffled_outputs.size,
+                            training_rate)
         }
         true
     end
