@@ -9,6 +9,7 @@
 using std::cout;
 using std::endl;
 
+void deep_model_to_weights_matrice(DeepModel* model, std::vector<Eigen::MatrixXd>& matrices);
 
 void print_a(const double* array, size_t size){
     for(size_t i = 0 ; i < size; i++)
@@ -58,6 +59,24 @@ void calculus_classification_delta_last_layer(struct DeepModel* model, double* o
         model->deltas[id_last_layer][i] = (1 - output_Lj*output_Lj) * (output_Lj - output[i-1]);
     }
 }
+
+void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::MatrixXd>& outputs, const Eigen::MatrixXd& expected_output){
+    const int last_layer = model->layer_count - 1;
+    std::vector<Eigen::MatrixXd> deltas = std::vector<Eigen::MatrixXd> {};
+    deltas.reserve(model->layer_count);
+    deltas[last_layer] = outputs[last_layer] - expected_output;
+    cout << "Heyya" << endl;
+    auto weights = std::vector<Eigen::MatrixXd>{};
+    deep_model_to_weights_matrice(model, weights);
+    for(int layer = last_layer; layer > 0 ; layer--){
+        Eigen::MatrixXd prev_layer_delta(1, model->d[layer - 1]);
+        const Eigen::MatrixXd layer_output = outputs[layer-1];
+        const Eigen::MatrixXd layer_weight(1,1);
+        const Eigen::MatrixXd one = Eigen::MatrixXd::Constant(layer_output.rows(), layer_output.cols(), 1.);
+        prev_layer_delta = (one - layer_output*layer_output) * layer_weight * deltas[layer];
+        deltas[layer-1] = prev_layer_delta;
+    }
+ }
 
 void calculus_delta_layers(struct DeepModel* model){
     for(int layer_l = model->layer_count-1; layer_l > 0; layer_l--){
@@ -201,7 +220,7 @@ extern "C"{
             auto example_neuron_outputs = std::vector<Eigen::MatrixXd> {};
             generate_xs_model(model, example_input, example_neuron_outputs);
             calculus_regression_delta(model, example_neuron_outputs, example_expected_output);
-
+            
             delete example_input;
         }
         return true;
