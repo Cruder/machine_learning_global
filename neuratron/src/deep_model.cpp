@@ -23,6 +23,7 @@ void calculus_regression_delta_last_layer(struct DeepModel* model, double* outpu
     int count_neuron_last_layer = model->d[id_last_layer];
     for(int i = 1; i < count_neuron_last_layer; i++){
         model->deltas[id_last_layer][i] = model->x[id_last_layer][i] - output[i];
+        model->deltas[id_last_layer][i] = model->x[id_last_layer][i] - output[i-1];
     }
 //    std::cout << "end calculus last layer" << std::endl;
 }
@@ -35,7 +36,7 @@ void calculus_classification_delta_last_layer(struct DeepModel* model, double* o
     for(int i = 1; i < count_neuron_last_layer; i++){
         const double output_Lj = model->x[id_last_layer][i];
         printf("neuron: %d\n", i);
-        model->deltas[id_last_layer][i] = (1 - output_Lj*output_Lj) * (output_Lj - output[i]);
+        model->deltas[id_last_layer][i] = (1 - output_Lj*output_Lj) * (output_Lj - output[i-1]);
     }
 }
 
