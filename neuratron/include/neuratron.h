@@ -1,8 +1,10 @@
 #ifndef __NEURATRON_H__
 #define __NEURATRON_H__
 
-extern "C" {
+#include <vector>
+#include <Eigen/Dense>
 
+extern "C" {
     struct DeepModel{
         int layer_count;
         double*** w;
