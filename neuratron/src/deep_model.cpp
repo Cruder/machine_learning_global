@@ -123,7 +123,7 @@ void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::Matrix
     update_weights_matrix(model, matXs, deltas, learning_rate);
  }
 
- void calculus_classification_delta(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const Eigen::MatrixXd& matY){
+ void calculus_classification_delta(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const Eigen::MatrixXd& matY, double learning_rate){
     const int last_layer = model->layer_count - 1;
     std::vector<Eigen::MatrixXd> deltas(model->layer_count);
     cout << deltas.size() << endl;
@@ -334,7 +334,7 @@ extern "C"{
             cout << endl;
             auto example_neuron_outputs = std::vector<Eigen::MatrixXd> {};
             generate_xs_model(model, example_input, example_neuron_outputs);
-            calculus_classification_delta(model, example_neuron_outputs, example_expected_output);
+            calculus_classification_delta(model, example_neuron_outputs, example_expected_output, training_rate);
 
             delete example_input;
         }
