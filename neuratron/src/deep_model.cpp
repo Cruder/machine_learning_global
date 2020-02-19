@@ -133,59 +133,36 @@ extern "C"{
     // };
 
     void generate_xs_model(struct DeepModel* model, double* input, std::vector<Eigen::MatrixXd>& matrices) {
-        Eigen::MatrixXd x0(1, model->d[0]);
+        Eigen::MatrixXd xi(1, model->d[0]);
 
-        x0(0, 0) = 1;
+        xi(0, 0) = 1;
         for(int i = 0; i < model->d[0] - 1; ++i) {
-            x0(0, i + 1) = input[i];
+            xi(0, i + 1) = input[i];
         }
 
-        std::cout << "x0" << std::endl << x0 << std::endl;
+        matrices.push_back(xi);
 
-        std::cout << "Map from <=> to : " << model->d[0] << " <=> " << model->d[1] << std::endl;
+        std::cout << "x0" << std::endl << xi << std::endl;
 
-        // Setup w0
-        Eigen::MatrixXd w0(model->d[0], model->d[1]);
+        for(int i = 1; i < model->layer_count; ++i) {
+            std::cout << "Map from <=> to : " << model->d[i - 1] << " <=> " << model->d[i] << std::endl;
 
-        for(int i = 0; i < model->d[0]; ++i) {
-            for(int j = 0; j < model->d[1]; ++j) {
-                w0(i, j) = model->w[0][i][j];
+            Eigen::MatrixXd wi(model->d[i - 1], model->d[i]);
+            for(int k = 0; k < model->d[i - 1]; ++k) {
+                for(int j = 0; j < model->d[i]; ++j) {
+                    wi(k, j) = model->w[i - 1][k][j];
+                }
             }
+
+            std::cout << "w" << i << std::endl << wi << std::endl;
+
+            xi = (xi * wi);
+            xi = xi.unaryExpr([](double x){ return std::tanh(x); });
+            xi(0, 0) = 1;
+            matrices.push_back(xi);
+
+            std::cout << "x" << i << std::endl << xi << std::endl;
         }
-
-        std::cout << "w0" << std::endl << w0 << std::endl;
-        // End Setup w0
-
-        // Setup x1
-        Eigen::MatrixXd x1 = x0 * w0;
-        x1(0, 0) = 1;
-        std::cout << "x1" << std::endl << x1 << std::endl;
-        // End Setup x1
-
-        std::cout << "Map from <=> to : " << model->d[1] << " <=> " << model->d[2] << std::endl;
-
-
-        // Setup w1
-        Eigen::MatrixXd w1(model->d[1], model->d[2]);
-
-        for(int i = 0; i < model->d[1]; ++i) {
-            for(int j = 0; j < model->d[2]; ++j) {
-                w1(i, j) = model->w[1][i][j];
-            }
-        }
-
-        std::cout << "w1" << std::endl << w1 << std::endl;
-        // End Setup w1
-
-        // Setup x2
-        Eigen::MatrixXd x2 = x1 * w1;
-        x2(0, 0) = 1;
-        std::cout << "x2" << std::endl << x2 << std::endl;
-        // End Setup x2
-
-        matrices.push_back(x0);
-        matrices.push_back(x1);
-        matrices.push_back(x2);
     }
 
     double* predict_deep_model_regression(struct DeepModel* model, double* input) {
