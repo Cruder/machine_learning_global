@@ -1,10 +1,8 @@
 #include "neuratron.h"
-#include <Eigen/Dense>
 #include <cstdlib>
 #include <iostream>
 #include <ctime>
 #include <cmath>
-#include <vector>
 #include <cstdio>
 
 // std::srand(std::time(nullptr));
@@ -103,6 +101,18 @@ void generate_xs_model(struct DeepModel* model, double* input, std::vector<Eigen
         matrices.push_back(xi);
 
 //        std::cout << "x" << i << std::endl << xi << std::endl;
+    }
+}
+
+void deep_weights_to_matrice(double*** w, int* sizes, int size, std::vector<Eigen::MatrixXd>& matrices) {
+    for (size_t i = 0; i < size - 1; i++) {
+        Eigen::MatrixXd matrice (sizes[i], sizes[i + 1]);
+        for (size_t a = 0; a < sizes[i]; a++) {
+            for (size_t b = 0; b < sizes[i + 1]; b++) {
+                matrice(a, b) = w[i][a][b];
+            }
+        }
+        matrices.push_back(matrice);
     }
 }
 
