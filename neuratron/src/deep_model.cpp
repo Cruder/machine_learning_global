@@ -66,15 +66,20 @@ void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::Matrix
     cout << deltas.size() << endl;
     std::cout << "matXs last layer = " << std::endl << matXs[last_layer] << std::endl;
     std::cout << "matY = " << std::endl << matY << std::endl;
+
+
     deltas[last_layer] = (matXs[last_layer] - matY).transpose();
+
+
     cout << "deltas[" << last_layer << "] = " << endl << deltas[last_layer] << endl;
     auto weights = std::vector<Eigen::MatrixXd>{};
     deep_model_to_weights_matrice(model, weights);
     for(int layer = last_layer; layer > 0 ; layer--){
+        std::cout << "+=============================+\n\n\nStart with layer = " << layer << "\n\n\n+=============================+" << endl;
         Eigen::MatrixXd prev_layer_delta(1, model->d[layer - 1]);
         const Eigen::MatrixXd layer_output = matXs[layer-1];
-        // const Eigen::MatrixXd layer_weight(1,1);
         const Eigen::MatrixXd one = Eigen::MatrixXd::Constant(layer_output.rows(), layer_output.cols(), 1.);
+        // const Eigen::MatrixXd layer_weight(1,1);
         std::cout << "Iteration layer " << layer << endl;
         std::cout << "one = " << std::endl << one << std::endl;
         std::cout << "layer_output = " << std::endl << layer_output << std::endl;
@@ -86,14 +91,56 @@ void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::Matrix
         Eigen::MatrixXd right = weights[layer -1] * deltas[layer];
         std::cout << "(right) weights[layer -1] * deltas[layer (" << layer << ")] = " << std::endl << right << std::endl;
 
-        prev_layer_delta = left.transpose() * right.transpose();
+        prev_layer_delta = (left.transpose() * right.transpose()).diagonal();
+        // prev_layer_delta = left * right;
         std::cout << "prev_layer_delta = " << std::endl << prev_layer_delta << std::endl;
         std::cout << "Add to " << layer - 1 << endl;
         // deltas.insert(std::begin(deltas) + layer, prev_layer_delta);
         deltas[layer-1] = prev_layer_delta;
-        std::cout << "Memory leak ?" << endl;
     }
  }
+
+ void calculus_classification_delta(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const Eigen::MatrixXd& matY){
+    const int last_layer = model->layer_count - 1;
+    std::vector<Eigen::MatrixXd> deltas(model->layer_count);
+    cout << deltas.size() << endl;
+    std::cout << "matXs last layer = " << std::endl << matXs[last_layer] << std::endl;
+    std::cout << "matY = " << std::endl << matY << std::endl;
+
+    Eigen::MatrixXd left1 = matXs[last_layer].unaryExpr([](double x){ return 1 - x * x; });
+    Eigen::MatrixXd right1 = (matXs[last_layer] - matY);
+    std::cout << "Left 1 " << std::endl << left1 << std::endl << std::endl << "Right 1 " << std::endl << right1 << std::endl;
+    deltas[last_layer] = (left1.transpose() * right1).diagonal();
+
+    cout << "deltas[" << last_layer << "] = " << endl << deltas[last_layer] << endl;
+    auto weights = std::vector<Eigen::MatrixXd>{};
+    deep_model_to_weights_matrice(model, weights);
+    for(int layer = last_layer; layer > 0 ; layer--){
+        std::cout << "+=============================+\n\n\nStart with layer = " << layer << "\n\n\n+=============================+" << endl;
+        Eigen::MatrixXd prev_layer_delta(1, model->d[layer - 1]);
+        const Eigen::MatrixXd layer_output = matXs[layer-1];
+        const Eigen::MatrixXd one = Eigen::MatrixXd::Constant(layer_output.rows(), layer_output.cols(), 1.);
+        // const Eigen::MatrixXd layer_weight(1,1);
+        std::cout << "Iteration layer " << layer << endl;
+        std::cout << "one = " << std::endl << one << std::endl;
+        std::cout << "layer_output = " << std::endl << layer_output << std::endl;
+        std::cout << "weights[layer -1] = " << std::endl << weights[layer -1] << std::endl;
+        std::cout << "deltas[layer (" << layer << ")] = " << std::endl << deltas[layer] << std::endl;
+
+        Eigen::MatrixXd left = one - layer_output.unaryExpr([](double x){ return x * x; });
+        std::cout << "(left) one - layer_output*layer_output = " << std::endl << left << std::endl;
+        Eigen::MatrixXd right = weights[layer -1] * deltas[layer];
+        std::cout << "(right) weights[layer -1] * deltas[layer (" << layer << ")] = " << std::endl << right << std::endl;
+
+        prev_layer_delta = (left.transpose() * right.transpose()).diagonal();
+        // prev_layer_delta = left * right;
+        std::cout << "prev_layer_delta = " << std::endl << prev_layer_delta << std::endl;
+        std::cout << "Add to " << layer - 1 << endl;
+        // deltas.insert(std::begin(deltas) + layer, prev_layer_delta);
+        deltas[layer-1] = prev_layer_delta;
+    }
+ }
+
 
 void calculus_delta_layers(struct DeepModel* model){
     for(int layer_l = model->layer_count-1; layer_l > 0; layer_l--){
@@ -252,20 +299,24 @@ extern "C"{
         std::cout << "var helper" << std::endl;
         for(int i = 0 ; i < example_counts; i++){
             double* example_input = new double[size_input_layer];
-            double* example_output = new double[size_output_layer];
+            auto example_expected_output = Eigen::MatrixXd(1, size_output_layer + 1);
             std::cout << "select range input/output for iteration" << std::endl;
             for(int k = 0 ; k < size_input_layer; k++)
                 example_input[k] = input[i*size_input_layer+k];
+            example_expected_output(0, 0) = 1;
             for(int k = 0 ; k < size_output_layer; k++)
-                example_output[k] = output[i*size_output_layer+k];
-            calculus_classification_delta_last_layer(model, output);
-            calculus_delta_layers(model);
-            update_weights(model, training_rate);
+                example_expected_output(0, k + 1) = output[i * size_output_layer + k];
+            cout << "=====| Example input/output |=====" << endl;
+            cout << endl;
+            auto example_neuron_outputs = std::vector<Eigen::MatrixXd> {};
+            generate_xs_model(model, example_input, example_neuron_outputs);
+            calculus_classification_delta(model, example_neuron_outputs, example_expected_output);
+
             delete example_input;
-            delete example_output;
         }
         return true;
     }
+
 
 
     // struct DeepModel{
