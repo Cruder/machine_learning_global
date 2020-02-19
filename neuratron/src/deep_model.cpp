@@ -208,39 +208,6 @@ extern "C"{
     //     int* d;
     // };
 
-    void generate_xs_model(struct DeepModel* model, double* input, std::vector<Eigen::MatrixXd>& matrices) {
-        Eigen::MatrixXd xi(1, model->d[0]);
-
-        xi(0, 0) = 1;
-        for(int i = 0; i < model->d[0] - 1; ++i) {
-            xi(0, i + 1) = input[i];
-        }
-
-        matrices.push_back(xi);
-
-        std::cout << "x0" << std::endl << xi << std::endl;
-
-        for(int i = 1; i < model->layer_count; ++i) {
-            std::cout << "Map from <=> to : " << model->d[i - 1] << " <=> " << model->d[i] << std::endl;
-
-            Eigen::MatrixXd wi(model->d[i - 1], model->d[i]);
-            for(int k = 0; k < model->d[i - 1]; ++k) {
-                for(int j = 0; j < model->d[i]; ++j) {
-                    wi(k, j) = model->w[i - 1][k][j];
-                }
-            }
-
-            std::cout << "w" << i << std::endl << wi << std::endl;
-
-            xi = (xi * wi);
-            xi = xi.unaryExpr([](double x){ return std::tanh(x); });
-            xi(0, 0) = 1;
-            matrices.push_back(xi);
-
-            std::cout << "x" << i << std::endl << xi << std::endl;
-        }
-    }
-
     double* predict_deep_model_regression(struct DeepModel* model, double* input) {
         int output_size = model->d[model->layer_count - 1] - 1;
 
