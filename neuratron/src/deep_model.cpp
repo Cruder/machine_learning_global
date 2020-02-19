@@ -260,7 +260,7 @@ extern "C"{
             cout << endl;
             auto example_neuron_outputs = std::vector<Eigen::MatrixXd> {};
             generate_xs_model(model, example_input, example_neuron_outputs);
-            calculus_regression_delta(model, example_neuron_outputs, example_expected_output);
+            calculus_regression_delta(model, example_neuron_outputs, example_expected_output, training_rate);
 
             delete example_input;
         }
