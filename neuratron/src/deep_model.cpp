@@ -22,7 +22,7 @@ void calculus_regression_delta_last_layer(struct DeepModel* model, double* outpu
     const int id_last_layer = model->layer_count - 1;
     int count_neuron_last_layer = model->d[id_last_layer];
     for(int i = 1; i < count_neuron_last_layer; i++){
-        model->deltas[id_last_layer][i] = model->x[id_last_layer][i] - output[i];
+        printf("neuron: %d || %d, %lf\n", i, model->x[id_last_layer][i], output[i-1]);
         model->deltas[id_last_layer][i] = model->x[id_last_layer][i] - output[i-1];
     }
 //    std::cout << "end calculus last layer" << std::endl;
@@ -42,9 +42,9 @@ void calculus_classification_delta_last_layer(struct DeepModel* model, double* o
 
 void calculus_delta_layers(struct DeepModel* model){
     for(int layer_l = model->layer_count-1; layer_l > 0; layer_l--){
-        for(int i_neuron = 1 ; i_neuron < model->d[layer_l-1]; i_neuron++){
+        for(int i_neuron = 0 ; i_neuron < model->d[layer_l-1]; i_neuron++){
             double sigma_w_delta = 0.;
-            for(int j_neuron = 1; j_neuron < model->d[layer_l]; j_neuron++){
+            for(int j_neuron = 0; j_neuron < model->d[layer_l]; j_neuron++){
 //                std::cout << ", l: " << layer_l << "j: " << j_neuron << ", i: " << i_neuron << std::endl;
                 const double delta_l_j = model->deltas[layer_l][j_neuron];
                 const double weight_l_ij = model->w[layer_l-1][i_neuron][j_neuron];
@@ -61,8 +61,8 @@ void calculus_delta_layers(struct DeepModel* model){
 void update_weights(DeepModel* model, double learning_rate){
     std::cout << "========= UPDATE WEIGHTS ========" << std::endl;
     for(int l = 1 ; l < model->layer_count; l++)
-        for(int i = 0; i < model->d[l - 1] - 1; i++){
-            for(int j = 0; j < model->d[l] - 1; j++){
+        for(int i = 0; i < model->d[l - 1]; i++){
+            for(int j = 0; j < model->d[l]; j++){
                 const double output_prev_layer_i = model->x[l-1][i];
                 const double dot_output_delta = output_prev_layer_i * model->deltas[l][j];
                 model->w[l-1][i][j] -= learning_rate * dot_output_delta;
