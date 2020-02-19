@@ -13,12 +13,14 @@ lib LibNeuratron
   fun train_deep_regression_model(
     model : DeepModel*,
     input : Float64*, input_size : Int32,
-    output : Float64*, output_size : Int32
+    output : Float64*, output_size : Int32,
+    training_rate : Float64
   ) : Bool
   fun train_deep_classification_model(
     model : DeepModel*,
     input : Float64*, input_size : Int32,
-    output : Float64*, output_size : Int32
+    output : Float64*, output_size : Int32,
+    training_rate : Float64
   ) : Bool
   fun predict_deep_model_regression(model : DeepModel*, input : Float64*) : Float64*
   fun predict_deep_model_classification(model : DeepModel*, input : Float64*) : Float64

@@ -22,8 +22,8 @@ extern "C" {
     int free_linear_model(LinearModel* model);
 
     struct DeepModel* create_deep_model(int* neurons_per_layers, int size);
-    bool train_deep_regression_model(struct DeepModel* model, double* input, int input_size, double* output, int output_size);
-    bool train_deep_classification_model(struct DeepModel* model, double* input, int input_size, double* output, int output_size);
+    bool train_deep_regression_model(struct DeepModel* model, double* input, int input_size, double* output, int output_size, double training_rate);
+    bool train_deep_classification_model(struct DeepModel* model, double* input, int input_size, double* output, int output_size, double training_rate);
 }
 
 #endif // __NEURATRON_H__
