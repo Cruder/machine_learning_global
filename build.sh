@@ -6,7 +6,7 @@ cd neuratron/build
 echo -e "\e[36mCreate cmake artefacts\e[39m"
 cmake ..
 echo -e "\e[36mBuild lib\e[39m"
-make
+sudo make install
 
 LD_LIBRARY_PATH=`pwd`/
 echo -e "\e[36mExport LD_LIBRARY\e[39m"

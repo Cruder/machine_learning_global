@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.10)
 project(neuratron)
 set(CMAKE_CXX_STANDARD 17)
 include_directories(${neuratron_SOURCE_DIR}/include)
