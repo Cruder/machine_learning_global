@@ -12,8 +12,8 @@ extern "C" {
         RadialModel* model = new RadialModel;
         model->examples_count = count_example;
         model->gamma = gamma;
-        model->sizeInput = size_input;
-        model->sizeOutput = size_output;
+        model->size_input = size_input;
+        model->size_output = size_output;
         model->w = new double*[size_input];
         for(int i = 0 ; i < size_input; i++){
             model->w[i] = new double[count_example];
