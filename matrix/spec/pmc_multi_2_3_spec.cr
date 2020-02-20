@@ -26,7 +26,7 @@ describe Neuratron::LinearModel do
     model.train_classification(inputs, expected_outputs, 1, 0.1)
     predictions = input_to_classify.map do |input|
       puts "Predict for #{input}"
-      results = model.predict(input, Neuratron::DeepModel::Regression.new) # TODO : use Neuratron::DeepModel::Classification
+      results = model.predict(input)
       puts "Prediction #{results}"
       results
     end
