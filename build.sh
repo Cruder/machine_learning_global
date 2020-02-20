@@ -5,7 +5,7 @@ echo -e "\e[36mCreate folder\e[39m"
 mkdir -p neuratron/build
 cd neuratron/build
 echo -e "\e[36mCreate cmake artefacts\e[39m"
-cmake ..
+sudo cmake ..
 echo -e "\e[36mBuild lib\e[39m"
 sudo make install
 cd ../../
