@@ -24,7 +24,7 @@ input_to_classify = [
   [5.0, 5.0],
   [6.0, 6.0],
 ]
-model = Neuratron::DeepModel.new(2, 3, 3, 3)
+model = Neuratron::DeepModel.new(2, 3)
 model.train_classification(inputs, expected_outputs, 10000, 0.01)
 predictions = input_to_classify.map do |input|
   puts "Predict for #{input}"
