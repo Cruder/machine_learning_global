@@ -1,4 +1,4 @@
-@[Link("neuratron")]
+@[Link(ldflags: "/usr/local/lib/libneuratron.so")]
 lib LibNeuratron
   @[Extern]
   struct DeepModel
