@@ -46,7 +46,7 @@ lib LibNeuratron
 
   @[Extern]
   struct RadialModel
-      example_count : Int32
+      examples_count : Int32
       size_input: Int32
       size_output: Int32
       w : Float64***
