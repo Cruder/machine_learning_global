@@ -12,12 +12,13 @@ module Neuratron
 
     def predict(input)
       result = LibNeuratron.predict_deep_model_regression(@model, input)
-      Array.new(@model.value.d[@model.value.layer_count - 2]) { |i| result[i + 1] }
+      Array.new(@model.value.d[@model.value.layer_count - 1] - 1) { |i| result[i + 1] }
     end
 
     def train_regression(inputs : Array(Array(Float64)), outputs : Array(Array(Float64)), iteration : Int32, training_rate : Float64)
         zip_original = inputs.zip(outputs).map { |input, output| [input, output] }
-        (1..iteration).each {
+        (1..iteration).each { |i|
+          puts "Iteration #{i}"
             shuffled_inputs, shuffled_outputs = shuffle_dataset(zip_original)
             went_well = LibNeuratron.train_deep_regression_model(@model, shuffled_inputs.to_unsafe, shuffled_inputs.size,
                             shuffled_outputs.to_unsafe, shuffled_outputs.size,
@@ -41,7 +42,8 @@ module Neuratron
 
     def train_classification(inputs, outputs, iteration, training_rate)
         zip_original = inputs.zip(outputs).map { |input, output| [input, output] }
-        (1..iteration).each {
+        (1..iteration).each { |i|
+          puts "Iteration #{i}"
             shuffled_inputs, shuffled_outputs = shuffle_dataset(zip_original)
             went_well = LibNeuratron.train_deep_classification_model(@model,
                             shuffled_inputs.to_unsafe, shuffled_inputs.size,

@@ -416,7 +416,7 @@ describe Neuratron::LinearModel do
       [4.8, 4.8]
     ]
     model = Neuratron::DeepModel.new(2, 10, 10, 1)
-    model.train_classification(inputs, expected_outputs, 2, 0.3)
+    model.train_classification(inputs, expected_outputs, 1000, 0.01)
 
     predictions = inputs_to_classify.map do |input|
       puts "Predict for #{input}"

@@ -18,64 +18,53 @@ void update_weights(DeepModel* model, double learning_rate);
 
 
 Eigen::MatrixXd matrix_hadamard(Eigen::MatrixXd& x, Eigen::MatrixXd& y) {
-    std::cout << "matrix_hadamard" << std::endl;
-    std::cout << x << std::endl << y << std::endl;
     Eigen::MatrixXd result(x.rows(), x.cols());
-
-    std::cout << "(X) Cols / Row => " << x.cols() << " / " << x.rows() << std::endl;
-    std::cout << "(Y) Cols / Row => " << y.cols() << " / " << y.rows() << std::endl;
-    std::cout << "(Result) Cols / Row => " << result.cols() << " / " << result.rows() << std::endl;
 
     for(int i = 0; i < x.rows(); ++i) {
         for(int j = 0; j < x.cols(); ++j) {
-            std::cout << "SET IN (" << i << ", " << j << ") => x (" << x(i, j) << ") * y (" << y(i, j) << ")" << std::endl;
             result(i, j) = x(i, j) * y(i, j);
         }
     }
-
-    std::cout << "Cols / Row => " << x.cols() << x.rows() << std::endl;
-
-    std::cout << result << std::endl;
 
     return result;
 }
 
 void print_a(const double* array, size_t size){
-    for(size_t i = 0 ; i < size; i++)
-        printf("%4.6lf ", array[i]);
-    cout << endl;
+    // for(size_t i = 0 ; i < size; i++)
+    //     printf("%4.6lf ", array[i]);
+    // cout << endl;
 }
 
 void print_deltas(const DeepModel* model){
-    cout << "================== PRINT DELTAS ==================" << endl;
-    for(int layer = 0; layer < model->layer_count; layer++) {
-        cout << "[" << layer << "]: ";
-        for (int neuron = 0; neuron < model->d[layer]; neuron++)
-            printf("%14.6e, ",  model->deltas[layer][neuron]);
-        cout << endl;
-    }
-    cout << "==================================================" << endl << endl;
+    // cout << "================== PRINT DELTAS ==================" << endl;
+    // for(int layer = 0; layer < model->layer_count; layer++) {
+    //     cout << "[" << layer << "]: ";
+    //     for (int neuron = 0; neuron < model->d[layer]; neuron++)
+    //         printf("%14.6e, ",  model->deltas[layer][neuron]);
+    //     cout << endl;
+    // }
+    // cout << "==================================================" << endl << endl;
 }
 
 void print_weights(const DeepModel* model){
-    cout << "================== PRINT WEIGHTS ==================" << endl;
-    for(int layer = 1; layer < model->layer_count; layer++) {
-        cout << "w[" << (layer-1) << "]: " << endl;
-        for (int neuron_i = 0; neuron_i < model->d[layer-1]; neuron_i++){
-            cout << "[" << neuron_i << "]";
-            for(int neuron_j = 0; neuron_j < model->d[layer]; neuron_j++) {
-                printf("%15.6e, ",  model->w[layer-1][neuron_i][neuron_j]);
-            }
-            if(neuron_i < model->d[layer-1] - 1 ) cout << endl;
-        }
-        if(layer < model->layer_count -1 ) cout << endl << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ";
-        cout << endl;
-    }
-    cout << "==================================================" << endl << endl;
+    // cout << "================== PRINT WEIGHTS ==================" << endl;
+    // for(int layer = 1; layer < model->layer_count; layer++) {
+    //     cout << "w[" << (layer-1) << "]: " << endl;
+    //     for (int neuron_i = 0; neuron_i < model->d[layer-1]; neuron_i++){
+    //         cout << "[" << neuron_i << "]";
+    //         for(int neuron_j = 0; neuron_j < model->d[layer]; neuron_j++) {
+    //             printf("%15.6e, ",  model->w[layer-1][neuron_i][neuron_j]);
+    //         }
+    //         if(neuron_i < model->d[layer-1] - 1 ) cout << endl;
+    //     }
+    //     if(layer < model->layer_count -1 ) cout << endl << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ";
+    //     cout << endl;
+    // }
+    // cout << "==================================================" << endl << endl;
 }
 
 void update_weights_matrix(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const std::vector<Eigen::MatrixXd>& matDeltas, double learning_rate){
-    cout << "===== Start update weights matrix =====" << endl;
+    // cout << "===== Start update weights matrix =====" << endl;
     const int last_layer = model->layer_count - 1;
     std::vector<Eigen::MatrixXd> new_weights(model->layer_count-1);
     auto current_weights = std::vector<Eigen::MatrixXd>{};
@@ -85,16 +74,16 @@ void update_weights_matrix(DeepModel* model, const std::vector<Eigen::MatrixXd>&
         const auto layer_delta = matDeltas[layer];
         const auto layer_output = matXs[layer-1];
         Eigen::MatrixXd new_layer_weight(old_layer_weight.rows(), old_layer_weight.cols());
-        cout << "old_layer_weight(" << old_layer_weight.rows() << ", " << old_layer_weight.cols() << ")" << endl;
-        cout << "layer_output(" << layer_output.rows() << ", " << layer_output.cols() << ")" << endl;
-        cout << "layer_delta(" << layer_delta.rows() << ", " << layer_delta.cols() << ")" << endl;
+        // cout << "old_layer_weight(" << old_layer_weight.rows() << ", " << old_layer_weight.cols() << ")" << endl;
+        // cout << "layer_output(" << layer_output.rows() << ", " << layer_output.cols() << ")" << endl;
+        // cout << "layer_delta(" << layer_delta.rows() << ", " << layer_delta.cols() << ")" << endl;
         Eigen::MatrixXd changes = learning_rate * layer_output.transpose() * layer_delta;
-        cout << "Changes(" << changes.rows() << ", " << changes.cols() << ")" << endl;
-        std::cout << "Changes (learning_rate * layer_output.transpose() * layer_delta.transpose()) = " << std::endl << changes << std::endl;
+        // cout << "Changes(" << changes.rows() << ", " << changes.cols() << ")" << endl;
+        // std::cout << "Changes (learning_rate * layer_output.transpose() * layer_delta.transpose()) = " << std::endl << changes << std::endl;
         new_layer_weight = old_layer_weight - changes;
         new_weights[layer-1] = new_layer_weight;
     }
-    cout << "start editing model weight" << endl;
+    // cout << "start editing model weight" << endl;
     for(int layer = 1; layer < last_layer + 1; layer++){
         const auto layer_weight = new_weights[layer-1];
         for(int neuron_i = 0; neuron_i < model->d[layer-1]; neuron_i++)
@@ -102,22 +91,22 @@ void update_weights_matrix(DeepModel* model, const std::vector<Eigen::MatrixXd>&
                 model->w[layer-1][neuron_i][neuron_j] = layer_weight(neuron_i, neuron_j);
             }
     }
-    cout << "===== end update weights matrix =====" << endl;
+    // cout << "===== end update weights matrix =====" << endl;
 //    print_weights(model);
 }
 
 void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const Eigen::MatrixXd& matY, double learning_rate){
     const int last_layer = model->layer_count - 1;
     std::vector<Eigen::MatrixXd> deltas(model->layer_count);
-    cout << deltas.size() << endl;
-    std::cout << "matXs last layer = " << std::endl << matXs[last_layer] << std::endl;
-    std::cout << "matY = " << std::endl << matY << std::endl;
+    // cout << deltas.size() << endl;
+    // std::cout << "matXs last layer = " << std::endl << matXs[last_layer] << std::endl;
+    // std::cout << "matY = " << std::endl << matY << std::endl;
 
 
     deltas[last_layer] = (matXs[last_layer] - matY).transpose();
 
 
-    cout << "deltas[" << last_layer << "] = " << endl << deltas[last_layer] << endl;
+    // cout << "deltas[" << last_layer << "] = " << endl << deltas[last_layer] << endl;
     auto weights = std::vector<Eigen::MatrixXd>{};
     deep_model_to_weights_matrice(model, weights);
     for(int layer = last_layer; layer > 0 ; layer--){
@@ -126,22 +115,22 @@ void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::Matrix
         const Eigen::MatrixXd layer_output = matXs[layer-1];
         const Eigen::MatrixXd one = Eigen::MatrixXd::Constant(layer_output.rows(), layer_output.cols(), 1.);
         // const Eigen::MatrixXd layer_weight(1,1);
-        std::cout << "Iteration layer " << layer << endl;
-        std::cout << "one = " << std::endl << one << std::endl;
-        std::cout << "layer_output = " << std::endl << layer_output << std::endl;
-        std::cout << "weights[layer -1] = " << std::endl << weights[layer -1] << std::endl;
-        std::cout << "deltas[layer (" << layer << ")] = " << std::endl << deltas[layer] << std::endl;
+        // std::cout << "Iteration layer " << layer << endl;
+        // std::cout << "one = " << std::endl << one << std::endl;
+        // std::cout << "layer_output = " << std::endl << layer_output << std::endl;
+        // std::cout << "weights[layer -1] = " << std::endl << weights[layer -1] << std::endl;
+        // std::cout << "deltas[layer (" << layer << ")] = " << std::endl << deltas[layer] << std::endl;
 
         Eigen::MatrixXd left = (one - layer_output.unaryExpr([](double x){ return x * x; })).transpose();
-        std::cout << "(left) one - layer_output*layer_output = " << std::endl << left << std::endl;
+        // std::cout << "(left) one - layer_output*layer_output = " << std::endl << left << std::endl;
         Eigen::MatrixXd right = (weights[layer -1] * deltas[layer]);
-        std::cout << "(right) weights[layer -1] * deltas[layer (" << layer << ")] = " << std::endl << right << std::endl;
+        // std::cout << "(right) weights[layer -1] * deltas[layer (" << layer << ")] = " << std::endl << right << std::endl;
 
         // prev_layer_delta = (left.transpose() * right.transpose()).diagonal();
         prev_layer_delta = matrix_hadamard(left, right);
         // prev_layer_delta = left * right;
-        std::cout << "prev_layer_delta = " << std::endl << prev_layer_delta << std::endl;
-        std::cout << "Add to " << layer - 1 << endl;
+        // std::cout << "prev_layer_delta = " << std::endl << prev_layer_delta << std::endl;
+        // std::cout << "Add to " << layer - 1 << endl;
         // deltas.insert(std::begin(deltas) + layer, prev_layer_delta);
         deltas[layer-1] = prev_layer_delta;
     }
@@ -151,42 +140,40 @@ void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::Matrix
  void calculus_classification_delta(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const Eigen::MatrixXd& matY, double learning_rate){
     const int last_layer = model->layer_count - 1;
     std::vector<Eigen::MatrixXd> deltas(model->layer_count);
-    cout << deltas.size() << endl;
-    std::cout << "matXs last layer = " << std::endl << matXs[last_layer] << std::endl;
-    std::cout << "matY = " << std::endl << matY << std::endl;
+
+    // std::cout << "matXs last layer = " << std::endl << matXs[last_layer] << std::endl;
+    // std::cout << "matY = " << std::endl << matY << std::endl;
 
     Eigen::MatrixXd left1 = matXs[last_layer].unaryExpr([](double x){ return 1 - x * x; });
     Eigen::MatrixXd right1 = (matXs[last_layer] - matY);
-    std::cout << "Left 1 " << std::endl << left1 << std::endl << std::endl << "Right 1 " << std::endl << right1 << std::endl;
+    // std::cout << "Left 1 " << std::endl << left1 << std::endl << std::endl << "Right 1 " << std::endl << right1 << std::endl;
     // deltas[last_layer] = (left1.transpose() * right1).diagonal();
     deltas[last_layer] = matrix_hadamard(left1, right1);
 
-    cout << "deltas[" << last_layer << "] = " << endl << deltas[last_layer] << endl;
+    // cout << "deltas[" << last_layer << "] = " << endl << deltas[last_layer] << endl;
     auto weights = std::vector<Eigen::MatrixXd>{};
     deep_model_to_weights_matrice(model, weights);
     for(int layer = last_layer; layer > 0 ; layer--){
-        std::cout << "+=============================+\n\n\nStart with layer = " << layer << "\n\n\n+=============================+" << endl;
+        // std::cout << "+=============================+\n\n\tStart with layer = " << layer << "\n\n+=============================+" << endl;
         Eigen::MatrixXd prev_layer_delta(1, model->d[layer - 1]);
         const Eigen::MatrixXd layer_output = matXs[layer-1];
         const Eigen::MatrixXd one = Eigen::MatrixXd::Constant(layer_output.rows(), layer_output.cols(), 1.);
         // const Eigen::MatrixXd layer_weight(1,1);
-        std::cout << "Iteration layer " << layer << endl;
-        std::cout << "one = " << std::endl << one << std::endl;
-        std::cout << "layer_output = " << std::endl << layer_output << std::endl;
-        std::cout << "weights[layer -1] = " << std::endl << weights[layer -1] << std::endl;
-        std::cout << "deltas[layer (" << layer << ")] = " << std::endl << deltas[layer] << std::endl;
+        // std::cout << "layer_output = " << std::endl << layer_output << std::endl;
+        // std::cout << "weights[layer -1] = " << std::endl << weights[layer -1] << std::endl;
+        // std::cout << "deltas[layer (" << layer << ")] = " << std::endl << deltas[layer] << std::endl;
 
         Eigen::MatrixXd left = (one - layer_output.unaryExpr([](double x){ return x * x; })).transpose();
-        std::cout << "(left) one - layer_output*layer_output = " << std::endl << left << std::endl;
-        std::cout << "(right) weights[layer -1] * deltas[layer (" << layer << ")] = " << std::endl;
+        // std::cout << "(left) one - layer_output*layer_output = " << std::endl << left << std::endl;
+        // std::cout << "(right) weights[layer -1] * deltas[layer (" << layer << ")] = " << std::endl;
         Eigen::MatrixXd right = weights[layer -1] * deltas[layer].transpose();
-        std::cout << right << std::endl;
+        // std::cout << right << std::endl;
 
         // prev_layer_delta = (left.transpose() * right.transpose()).diagonal();
-        prev_layer_delta = matrix_hadamard(left, right);
+        prev_layer_delta = matrix_hadamard(left, right).transpose();
         // prev_layer_delta = left * right;
-        std::cout << "prev_layer_delta = " << std::endl << prev_layer_delta << std::endl;
-        std::cout << "Add to " << layer - 1 << endl;
+        // std::cout << "prev_layer_delta = " << std::endl << prev_layer_delta << std::endl;
+        // std::cout << "Add to " << layer - 1 << endl;
         // deltas.insert(std::begin(deltas) + layer, prev_layer_delta);
         deltas[layer-1] = prev_layer_delta;
     }
@@ -255,7 +242,7 @@ extern "C"{
             for (int j = 0; j < size_layer; j++) {
                 model->w[i][j] = new double[neurons_per_layers[i + 1]];
                 for (int k = 0; k < neurons_per_layers[i + 1]; k++)
-                    model->w[i][j][k] = std::rand() % 2 < 1 ? -1 : 1;
+                    model->w[i][j][k] = (((double) std::rand()) / RAND_MAX) * 2 - 1;
 
 //                for(int n = 0 ; n < size_layer; n++)
 //                    model->x[i][n] = 0;
@@ -268,6 +255,23 @@ extern "C"{
 //            for(int k = 0 ; k < size_last_layer; k++)
 //                model->x[j][k] = 0;
 
+        // std::cout << "========================" << std::endl;
+        //     std::cout << "Create neural network (";
+        //     for(int i = 0; i < size; ++i) { std::cout << neurons_per_layers[i] << ", "; }
+        //     std::cout << ") " << std::endl;
+        // std::cout << "========================" << std::endl;
+
+        // for(int i = 0; i < size; ++i) {
+        //     const int size_layer = neurons_per_layers[i] + 1;
+        //     for(int j = 0; j < size_layer; j++) {
+        //         for (int k = 0; k < neurons_per_layers[i + 1]; k++) {
+        //             std::cout << model->w[i][j][k] << ", ";
+        //         }
+        //         std::cout << std::endl;
+        //     }
+        //     std::cout << std::endl;
+        // }
+
         return model;
     }
 
@@ -276,18 +280,17 @@ extern "C"{
         int size_output_layer = model->d[model->layer_count-1] - 1;
         int example_counts = input_size / size_input_layer;
         int example_expected_result = output_size / size_output_layer;
-        std::cout << "var helper" << std::endl;
         for(int i = 0 ; i < example_counts; i++){
             double* example_input = new double[size_input_layer];
             auto example_expected_output = Eigen::MatrixXd(1, size_output_layer + 1);
-            std::cout << "select range input/output for iteration" << std::endl;
+            // std::cout << "select range input/output for iteration" << std::endl;
             for(int k = 0 ; k < size_input_layer; k++)
                 example_input[k] = input[i*size_input_layer+k];
             example_expected_output(0, 0) = 1;
             for(int k = 0 ; k < size_output_layer; k++)
                 example_expected_output(0, k + 1) = output[i * size_output_layer + k];
-            cout << "=====| Example input/output |=====" << endl;
-            cout << endl;
+            // cout << "=====| Example input/output |=====" << endl;
+            // cout << endl;
             auto example_neuron_outputs = std::vector<Eigen::MatrixXd> {};
             generate_xs_model(model, example_input, example_neuron_outputs);
             calculus_regression_delta(model, example_neuron_outputs, example_expected_output, training_rate);
@@ -302,21 +305,42 @@ extern "C"{
         int size_output_layer = model->d[model->layer_count-1] - 1;
         int example_counts = input_size / size_input_layer;
         int example_expected_result = output_size / size_output_layer;
-        std::cout << "var helper" << std::endl;
+
+
+        // std::cout << "========================" << std::endl;
+        //     std::cout << "Train Classification (count " << example_counts << ")" << std::endl;
+        // std::cout << "========================" << std::endl;
+
+
         for(int i = 0 ; i < example_counts; i++){
+            // std::cout << "--- Start example " << i << " --" << std::endl;
+
+            // Init data
             double* example_input = new double[size_input_layer];
-            auto example_expected_output = Eigen::MatrixXd(1, size_output_layer + 1);
-            std::cout << "select range input/output for iteration" << std::endl;
+            Eigen::MatrixXd example_expected_output(1, size_output_layer + 1);
             for(int k = 0 ; k < size_input_layer; k++)
                 example_input[k] = input[i*size_input_layer+k];
             example_expected_output(0, 0) = 1;
             for(int k = 0 ; k < size_output_layer; k++)
                 example_expected_output(0, k + 1) = output[i * size_output_layer + k];
-            cout << "=====| Example input/output |=====" << endl;
-            cout << endl;
-            auto example_neuron_outputs = std::vector<Eigen::MatrixXd> {};
-            generate_xs_model(model, example_input, example_neuron_outputs);
-            calculus_classification_delta(model, example_neuron_outputs, example_expected_output, training_rate);
+            // End init data
+
+
+            // std::cout << "example_expected_output : " << std::endl << example_expected_output << std::endl;
+
+            auto matXs = std::vector<Eigen::MatrixXd> {};
+            generate_xs_model(model, example_input, matXs);
+
+
+            // std::cout << "~~~~" << std::endl;
+            // std::cout << "Feed forward matXs(" << matXs.size() << ")" << std::endl;
+            // for(auto mat : matXs) {
+            //     std::cout << mat << std::endl << std::endl;
+            // }
+            // std::cout << "~~~~" << std::endl << std::endl;
+
+
+            calculus_classification_delta(model, matXs, example_expected_output, training_rate);
 
             delete example_input;
         }

@@ -16,14 +16,18 @@ describe Neuratron::LinearModel do
     ]
 
     input_to_classify = [
-      [1.3, 3.0],
-      [5.5, 5.5],
-      [0.0, 2.0],
-      [7.7, 6.0]
+    #   [1.3, 3.0],
+    #   [5.5, 5.5],
+    #   [0.0, 2.0],
+    #   [7.7, 6.0]
+    # ]
+      [1.0, 2.0],
+      [3.0, 4.0],
+      [5.0, 5.0],
+      [6.0, 6.0],
     ]
-
-    model = Neuratron::DeepModel.new(2, 3)
-    model.train_classification(inputs, expected_outputs, 1, 0.1)
+    model = Neuratron::DeepModel.new(2, 3, 3, 3)
+    model.train_classification(inputs, expected_outputs, 10000, 0.01)
     predictions = input_to_classify.map do |input|
       puts "Predict for #{input}"
       results = model.predict(input)
@@ -32,6 +36,7 @@ describe Neuratron::LinearModel do
     end
     points = Array(Array(Tuple(Float64, Float64))).new(3) { Array(Tuple(Float64, Float64)).new }
     positions = input_to_classify.zip(predictions).map do |data|
+      pp data[1]
       points[max_indice(data[1])] << { data[0][0], data[0][1] }
     end
     aqua_points = Array(AquaPlot::Scatter).new
