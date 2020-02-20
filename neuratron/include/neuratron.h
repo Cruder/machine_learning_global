@@ -22,8 +22,9 @@ extern "C" {
     struct RadialModel{
         double gamma;
         int examples_count;
-        int sizeInput;
-        int sizeOutput;
+        double** w[2];
+        int size_input;
+        int size_output;
     };
 
     struct LinearModel* create_linear_model(int input_size, int output_size);
