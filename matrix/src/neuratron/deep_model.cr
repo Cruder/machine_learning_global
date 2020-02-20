@@ -62,5 +62,11 @@ module Neuratron
         }
         true
     end
+
+    def generate_expected_indice(indice) : Array(Float64)
+      Array.new(@model.value.d[@model.value.layer_count - 1] - 1) do |i|
+        i == indice ? 1.0 : -1.0
+      end
+    end
   end
 end

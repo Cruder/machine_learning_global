@@ -10,6 +10,11 @@ using std::cout;
 using std::endl;
 
 void deep_model_to_weights_matrice(DeepModel* model, std::vector<Eigen::MatrixXd>& matrices);
+void calculus_delta_layers(struct DeepModel* model);
+void calculus_regression_delta_last_layer(struct DeepModel* model, double* output);
+void calculus_classification_delta_last_layer(struct DeepModel* model, double* output);
+void update_neurons_outputs(DeepModel* model, const std::vector<Eigen::MatrixXd>& outputs);
+void update_weights(DeepModel* model, double learning_rate);
 
 void print_a(const double* array, size_t size){
     for(size_t i = 0 ; i < size; i++)
@@ -18,46 +23,31 @@ void print_a(const double* array, size_t size){
 }
 
 void print_deltas(const DeepModel* model){
-    cout << "===== PRINT DELTAS =====" << endl;
+    cout << "================== PRINT DELTAS ==================" << endl;
     for(int layer = 0; layer < model->layer_count; layer++) {
         cout << "[" << layer << "]: ";
-        for (int neuron = 1; neuron < model->d[layer]; neuron++)
-            cout << model->deltas[layer][neuron] << " ";
+        for (int neuron = 0; neuron < model->d[layer]; neuron++)
+            printf("%14.6e, ",  model->deltas[layer][neuron]);
         cout << endl;
     }
-    cout << "================" << endl << endl;
+    cout << "==================================================" << endl << endl;
 }
 
 void print_weights(const DeepModel* model){
-    cout << "===== PRINT WEIGHTS =====" << endl;
-    for(int layer = 0; layer < model->layer_count-1; layer++) {
-        cout << "w[" << layer << "]: ";
+    cout << "================== PRINT WEIGHTS ==================" << endl;
+    for(int layer = 1; layer < model->layer_count; layer++) {
+        cout << "w[" << (layer-1) << "]: " << endl;
         for (int neuron_i = 0; neuron_i < model->d[layer-1]; neuron_i++){
             cout << "[" << neuron_i << "]";
-            for(int neuron_j = 0; neuron_j < model->d[layer]; neuron_j++)
-                cout << model->w[layer][neuron_i][neuron_j] << " ";
+            for(int neuron_j = 0; neuron_j < model->d[layer]; neuron_j++) {
+                printf("%15.6e, ",  model->w[layer-1][neuron_i][neuron_j]);
+            }
+            if(neuron_i < model->d[layer-1] - 1 ) cout << endl;
         }
+        if(layer < model->layer_count -1 ) cout << endl << "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ";
         cout << endl;
     }
-    cout << "================" << endl << endl;
-}
-
-void calculus_regression_delta_last_layer(struct DeepModel* model, double* output){
-    const int id_last_layer = model->layer_count - 1;
-    int count_neuron_last_layer = model->d[id_last_layer];
-    for(int i = 1; i < count_neuron_last_layer; i++){
-        model->deltas[id_last_layer][i] = model->x[id_last_layer][i] - output[i-1];
-    }
-}
-
-void calculus_classification_delta_last_layer(struct DeepModel* model, double* output){
-
-    const int id_last_layer = model->layer_count - 1;
-    int count_neuron_last_layer = model->d[id_last_layer];
-    for(int i = 1; i < count_neuron_last_layer; i++){
-        const double output_Lj = model->x[id_last_layer][i];
-        model->deltas[id_last_layer][i] = (1 - output_Lj*output_Lj) * (output_Lj - output[i-1]);
-    }
+    cout << "==================================================" << endl << endl;
 }
 
 void update_weights_matrix(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const std::vector<Eigen::MatrixXd>& matDeltas, double learning_rate){
@@ -172,35 +162,6 @@ void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::Matrix
     update_weights_matrix(model, matXs, deltas, learning_rate);
  }
 
-
-void calculus_delta_layers(struct DeepModel* model){
-    for(int layer_l = model->layer_count-1; layer_l > 0; layer_l--){
-        for(int i_neuron = 0 ; i_neuron < model->d[layer_l-1]; i_neuron++){
-            double sigma_w_delta = 0.;
-            for(int j_neuron = 0; j_neuron < model->d[layer_l]; j_neuron++){
-                const double delta_l_j = model->deltas[layer_l][j_neuron];
-                const double weight_l_ij = model->w[layer_l-1][i_neuron][j_neuron];
-                sigma_w_delta+= delta_l_j * weight_l_ij;
-            }
-            double output_layer_of_i_neuron = model->x[layer_l-1][i_neuron];
-            double delta_layer_of_i_neuron = (1 - output_layer_of_i_neuron * output_layer_of_i_neuron) * sigma_w_delta;
-            model->deltas[layer_l][i_neuron] = delta_layer_of_i_neuron;
-        }
-    }
-}
-
-void update_weights(DeepModel* model, double learning_rate){
-    for(int l = 1 ; l < model->layer_count; l++)
-        for(int i = 0; i < model->d[l - 1]; i++){
-            for(int j = 0; j < model->d[l]; j++){
-                const double output_prev_layer_i = model->x[l-1][i];
-                const double dot_output_delta = output_prev_layer_i * model->deltas[l][j];
-                model->w[l-1][i][j] -= learning_rate * dot_output_delta;
-            }
-        }
-}
-
-
 void generate_xs_model(struct DeepModel* model, double* input, std::vector<Eigen::MatrixXd>& matrices) {
     Eigen::MatrixXd xi(1, model->d[0]);
 
@@ -243,23 +204,6 @@ void deep_model_to_weights_matrice(DeepModel* model, std::vector<Eigen::MatrixXd
             }
         }
         matrices.push_back(matrice);
-    }
-}
-
-void update_neurons_outputs(DeepModel* model, const std::vector<Eigen::MatrixXd>& outputs){
-    for(int l = 0; l < outputs.size(); l++){
-        const auto output_l = outputs[l];
-        cout << "[" << l << "]: ";
-        for(int i = 1 ; i < output_l.cols(); i++)
-            printf("%lf, ", output_l(0,i));
-        cout << endl;
-    }
-    for(int layer_l = 0 ; layer_l < model->layer_count; layer_l++){
-        const auto layer_output = outputs[layer_l];
-        const int count_neuron = model->d[layer_l];
-        for(int neuron_j = 1; neuron_j < count_neuron; neuron_j++){
-            model->x[layer_l][neuron_j] =  layer_output(0, neuron_j);
-        }
     }
 }
 
@@ -394,5 +338,71 @@ extern "C"{
         delete[] model->w;
         delete model;
         return 0;
+    }
+}
+
+
+void calculus_regression_delta_last_layer(struct DeepModel* model, double* output){
+    const int id_last_layer = model->layer_count - 1;
+    int count_neuron_last_layer = model->d[id_last_layer];
+    model->deltas[count_neuron_last_layer][0] = 1;
+    for(int i = 1; i < count_neuron_last_layer; i++){
+        model->deltas[id_last_layer][i] = model->x[id_last_layer][i] - output[i-1];
+    }
+}
+void calculus_classification_delta_last_layer(struct DeepModel* model, double* output){
+
+    const int id_last_layer = model->layer_count - 1;
+    int count_neuron_last_layer = model->d[id_last_layer];
+    model->deltas[count_neuron_last_layer][0] = 1;
+    for(int i = 1; i < count_neuron_last_layer; i++){
+        const double output_Lj = model->x[id_last_layer][i];
+        model->deltas[id_last_layer][i] = (1 - output_Lj*output_Lj) * (output_Lj - output[i-1]);
+    }
+}
+
+void calculus_delta_layers(struct DeepModel* model){
+    for(int layer = model->layer_count - 1; layer > 0; layer--){
+        for(int neuron_i = 0 ; neuron_i < model->d[layer - 1]; neuron_i++){
+            double sigma_w_delta = 0.;
+            for(int neuron_j = 1; neuron_j < model->d[layer]; neuron_j++){
+                const double delta_l_j = model->deltas[layer][neuron_j];
+                const double weight_l_ij = model->w[layer - 1][neuron_i][neuron_j];
+                sigma_w_delta += delta_l_j * weight_l_ij;
+            }
+            double x_li = model->x[layer - 1][neuron_i];
+            double delta_layer_of_i_neuron = (1 - x_li * x_li) * sigma_w_delta;
+            model->deltas[layer - 1][neuron_i] = delta_layer_of_i_neuron;
+        }
+    }
+}
+
+void update_weights(DeepModel* model, double learning_rate){
+    for(int l = 1 ; l < model->layer_count; l++)
+        for(int i = 0; i < model->d[l - 1]; i++){
+            for(int j = 0; j < model->d[l]; j++){
+                const double output_prev_layer_i = model->x[l-1][i];
+                const double dot_output_delta = output_prev_layer_i * model->deltas[l][j];
+                model->w[l-1][i][j] -= learning_rate * dot_output_delta;
+            }
+        }
+}
+
+void update_neurons_outputs(DeepModel* model, const std::vector<Eigen::MatrixXd>& outputs){
+    /*
+    for(int l = 0; l < outputs.size(); l++){
+        const auto output_l = outputs[l];
+        cout << "[" << l << "]: ";
+        for(int i = 1 ; i < output_l.cols(); i++)
+            printf("%lf, ", output_l(0,i));
+        cout << endl;
+    }
+    */
+    for(int layer_l = 0 ; layer_l < model->layer_count; layer_l++){
+        const auto layer_output = outputs[layer_l];
+        const int count_neuron = model->d[layer_l];
+        for(int neuron_j = 1; neuron_j < count_neuron; neuron_j++){
+            model->x[layer_l][neuron_j] =  layer_output(0, neuron_j);
+        }
     }
 }
