@@ -24,25 +24,21 @@ describe Neuratron::LinearModel do
 
     model = Neuratron::DeepModel.new(2, 3)
     model.train_classification(inputs, expected_outputs, 1, 0.1)
-
     predictions = input_to_classify.map do |input|
       puts "Predict for #{input}"
-      results = model.predict(input, Neuratron::DeepModel::Regression.new) # TODO : use Neuratron::DeepModel::Classification
+      results = model.predict(input)
       puts "Prediction #{results}"
       results
     end
-
-    points = Array(Array(Tuple(Float64, Float64))).new
+    points = Array(Array(Tuple(Float64, Float64))).new(3) { Array(Tuple(Float64, Float64)).new }
     positions = input_to_classify.zip(predictions).map do |data|
       points[max_indice(data[1])] << { data[0][0], data[0][1] }
     end
-
     aqua_points = Array(AquaPlot::Scatter).new
     points.each do |point|
       aqua_points << AquaPlot::Scatter.from_points(point).tap(&.set_title("Points"))
     end
-
-    pp aqua_points[-1].style = "pm3d"
+    #pp aqua_points[-1].style = "pm3d"
 
     plt = AquaPlot::Plot.new aqua_points
     plt.set_key("off box")

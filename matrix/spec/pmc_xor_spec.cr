@@ -72,7 +72,7 @@ describe Neuratron::LinearModel do
 
     predictions = inputs_to_classify.map do |input|
       puts "Predict for #{input}"
-      results = model.predict(input, Neuratron::DeepModel::Regression.new) # TODO : use Neuratron::DeepModel::Classification
+      results = model.predict(input)
       puts "Prediction #{results}"
       results
     end
