@@ -9,10 +9,10 @@ describe Neuratron::LinearModel do
       [6.0, 6.0],
     ]
     expected_outputs = [
-      [1.0],
-      [1.0],
-      [-1.0],
-      [-1.0],
+      [-1.0, 1.0, -1.0],
+      [-1.0, 1.0, -1.0],
+      [1.0, -1.0, -1.0],
+      [-1.0, -1.0, 1.0],
     ]
 
     input_to_classify = [
@@ -32,26 +32,23 @@ describe Neuratron::LinearModel do
       results
     end
 
+    points = Array(Array(Tuple(Float64, Float64))).new
     positions = input_to_classify.zip(predictions).map do |data|
-      { data[0][0], data[0][1], data[1][0] }
+      points[max_indice(data[1])] << { data[0][0], data[0][1] }
     end
 
-    pp positions
+    aqua_points = Array(AquaPlot::Scatter).new
+    points.each do |point|
+      aqua_points << AquaPlot::Scatter.from_points(point).tap(&.set_title("Points"))
+    end
 
-    # math_formulat = "#{model.weights[0]} * 1 + #{model.weights[1]} * x + #{model.weights[2]} * y"
-    fns = [
-      AquaPlot::Scatter3D.from_points(positions).tap(&.set_title("Points")),
-      AquaPlot::Function.new("0", title: "0"),
-      # AquaPlot::Function.new(math_formulat, title: math_formulat),
-    ]
+    pp aqua_points[-1].style = "pm3d"
 
-    pp fns[-1].style = "pm3d"
-
-    plt = AquaPlot::Plot3D.new fns
-    plt.set_key("left box")
+    plt = AquaPlot::Plot.new aqua_points
+    plt.set_key("off box")
     plt.show
-    plt.set_view(100, 80, 1)
-    plt.show
+    # plt.set_view(100, 80, 1)
+    # plt.show
     plt.close
   end
 end
