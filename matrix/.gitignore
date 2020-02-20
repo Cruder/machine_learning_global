@@ -1,5 +1,6 @@
 /docs/
 /lib/
+!/lib/aquaplot/*
 /bin/
 /.shards/
 *.dwarf
