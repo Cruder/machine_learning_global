@@ -87,7 +87,7 @@ void update_weights_matrix(DeepModel* model, const std::vector<Eigen::MatrixXd>&
     }
     cout << "===== end update weights matrix =====" << endl;
 //    print_weights(model);
-}s
+}
 
 void calculus_regression_delta(DeepModel* model, const std::vector<Eigen::MatrixXd>& matXs, const Eigen::MatrixXd& matY, double learning_rate){
     const int last_layer = model->layer_count - 1;
