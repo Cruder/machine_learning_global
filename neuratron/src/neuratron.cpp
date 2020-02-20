@@ -47,6 +47,9 @@ extern "C" {
 
 
     auto res1 = matX.transpose() * (matX);
+    if (res1.determinant() == 0) {
+      return false;
+    }
     auto res2 = res1.inverse();
     auto res3 = res2 * (matX.transpose());
     auto result = res3 * (matY);
