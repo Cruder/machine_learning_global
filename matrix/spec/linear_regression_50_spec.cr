@@ -351,7 +351,7 @@ describe Neuratron::LinearModel do
     end
 
     positions = inputs_to_classify.zip(predictions).map do |data|
-      { data[0][0], data[0][1],  data[1] }
+      { data[0][0], data[0][1],  data[1][0] }
     end
 
     pp "positions", positions

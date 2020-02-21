@@ -40,8 +40,8 @@ lib LibNeuratron
     output : Float64*, output_size : Int32
   ) : Bool
 
-  fun predict_linear_model_regression(model : LinearModel*, input : Float64*) : Float64
-  fun predict_linear_model_classification(model : LinearModel*, input : Float64*) : Float64
+  fun predict_linear_model_regression(model : LinearModel*, input : Float64*) : Float64*
+  fun predict_linear_model_classification(model : LinearModel*, input : Float64*) : Float64*
   fun free_linear_model(model : Pointer(LinearModel)) : Int32
 
   @[Extern]

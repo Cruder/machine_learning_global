@@ -92,7 +92,7 @@ describe Neuratron::LinearModel do
 
     positions = inputs_to_classify.zip(predictions).map do |data|
         point = { data[0][0], data[0][1] }
-        data[1] < 0 ? points1 << point : points2 << point
+        data[1][0] < 0 ? points1 << point : points2 << point
     end
 
     # pp "positions", positions

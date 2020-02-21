@@ -353,7 +353,7 @@ describe Neuratron::LinearModel do
     points2 = Array(Tuple(Float64, Float64, Float64)).new
 
     inputs_to_classify.zip(predictions).map do |data|
-      point = { data[0][0], data[0][1], data[1] }
+      point = { data[0][0], data[0][1], data[1][0] }
       data[0][1] - (4 * data[0][0] + 5) > 0 ? points1 << point : points2 << point
     end
 

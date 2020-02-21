@@ -37,7 +37,9 @@ module Neuratron
     end
 
     def predict(input, kind = Regression.new)
-      kind.predict(@model, input.to_unsafe)
+      result = kind.predict(@model, input.to_unsafe)
+
+      Array.new(@model.value.size_output) { |i| result[i] }
     end
   end
 end
