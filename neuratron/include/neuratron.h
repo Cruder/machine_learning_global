@@ -26,7 +26,7 @@ extern "C" {
         double gamma;
         int examples_count;
         double* examples;
-        double* w;
+        double** w;
         int size_input;
         int size_output;
     };
@@ -39,6 +39,13 @@ extern "C" {
     struct DeepModel* create_deep_model(int* neurons_per_layers, int size);
     bool train_deep_regression_model(struct DeepModel* model, double* input, int input_size, double* output, int output_size, double training_rate);
     bool train_deep_classification_model(struct DeepModel* model, double* input, int input_size, double* output, int output_size, double training_rate);
+
+    struct RadialModel* create_radial_model(double* examples, int count_example, int size_input, int size_output, double gamma);
+
+    bool train_regression(RadialModel* model, double* expected_outputs);
+    bool train_classification(RadialModel* model, double* expected_outputs, int iteration);
+    double* predict_classification(const RadialModel* model, double* batch_input, int size_batch);
+    double* predict_regression(const RadialModel* model, double *batch_input, int size_batch);
 }
 
 #endif // __NEURATRON_H__
