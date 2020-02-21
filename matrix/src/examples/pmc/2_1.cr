@@ -14,14 +14,26 @@ expected_outputs = [
 ]
 
 input_to_classify = [
-  [1.3, 3.0],
+  [1.0, 2.0],
+  [3.0, 4.0],
+  [5.0, 5.0],
+  [6.0, 6.0],
+  [1.3, 1.0],
   [5.5, 5.5],
-  [0.0, 2.0],
-  [7.7, 6.0]
+  [1.5, 2.0],
+  [7.7, 6.0],
+  [0.98, 0.83],
+  [7.42, 1.13],
+  [7.32, 1.81],
+  [1.0, 3.0],
+  [4.86, 0.11],
+  [10.5, 6.69],
+  [6.8, 3.15],
+  [1.42, 5.47],
 ]
 
 model = Neuratron::DeepModel.new(2, 1)
-model.train_classification(inputs, expected_outputs, 2, 0.3)
+model.train_classification(inputs, expected_outputs, 10000, 0.01)
 
 predictions = input_to_classify.map do |input|
   puts "Predict for #{input}"
