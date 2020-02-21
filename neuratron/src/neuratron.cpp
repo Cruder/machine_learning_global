@@ -5,6 +5,18 @@
 #include <iostream>
 #include <random>
 
+Eigen::MatrixXd matrix_hadamard_addition(Eigen::MatrixXd& x, Eigen::MatrixXd& y) {
+    Eigen::MatrixXd result(x.rows(), x.cols());
+
+    for(int i = 0; i < x.rows(); ++i) {
+        for(int j = 0; j < x.cols(); ++j) {
+            result(i, j) = x(i, j) + y(i, j);
+        }
+    }
+
+    return result;
+}
+
 extern "C" {
   struct LinearModel* create_linear_model(int input_size, int output_size) {
     struct LinearModel* model = new LinearModel;
@@ -130,7 +142,7 @@ extern "C" {
     // std::cout << "temp2" << std::endl;
     // std::cout << temp2 << std::endl;
 
-    Eigen::MatrixXd result = matrix_hadamard(matW, temp2);
+    Eigen::MatrixXd result = matrix_hadamard_addition(matW, temp2);
 
     // std::cout << "result" << std::endl;
     // std::cout << result << std::endl;
@@ -160,11 +172,21 @@ extern "C" {
   }
 
   double* predict_linear_model_classification(struct LinearModel* model, double* input) {
+    // std::cout << "predict_linear_model_classification" << std::endl << "Weight" << std::endl;
+    // for(int i = 0; i < (model->sizeInput + 1) * model->sizeOutput; ++i) {
+    //   std::cout << model->inputs[i] << ", ";
+    //   if(i % (model->sizeInput + 1) == 0) { std::cout << std::endl; }
+    // }
+
     double* results = predict_linear_model_regression(model, input);
 
+    // std::cout << "Predict [ ";
     for(int i = 0; i < model->sizeOutput; ++i) {
-      results[i] = results[i] > 0 ? 1.0 : -1.0;
+      // std::cout << results[i] << ", " << std::endl;
+
+      // results[i] = results[i] > 0 ? 1.0 : -1.0;
     }
+    // std::cout << std::endl;
 
     return results;
   }

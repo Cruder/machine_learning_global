@@ -36,6 +36,10 @@ model.train(
 
 model.save("./save/linear_model_mnist.json")
 
+
+
+
+
 # class LinearModelData
 #   JSON.mapping(
 #     input: Int32,
@@ -46,7 +50,7 @@ model.save("./save/linear_model_mnist.json")
 
 # json = File.read("./save/linear_model_mnist.json")
 # data = LinearModelData.from_json(json)
-
+# pp data
 # raw_model = LibNeuratron::LinearModel.new(size_input: data.input, size_output: data.output, inputs: data.weights.to_unsafe)
 
 # model = Neuratron::LinearModel.new(pointerof(raw_model))
@@ -70,21 +74,17 @@ model.save("./save/linear_model_mnist.json")
 #   Array.new(10) { |i| i == datum.label ? 1.0 : -1.0 }
 # end
 
-# pp images[0]
-# pp labels[0]
-
-
-# accuracy = images.zip(labels).map do |image, label|
-#   prediction = model.predict(image, kind: Neuratron::LinearModel::Regression.new)
+# accuracy = images.zip(labels)[0..1].map do |image, label|
+#   prediction = model.predict(image, kind: Neuratron::LinearModel::Classification.new)
 
 #   predicted_number = max_indice(prediction)
 #   real_label = max_indice(label)
 
-#   print_mnist_ascii(image)
+#   # print_mnist_ascii(image)
 #   puts "Label #{max_indice(label)} #{label}"
 #   puts "Predictions #{max_indice(prediction)} #{prediction}"
 
-#   input = gets.not_nil!
+#   # input = gets.not_nil!
 
 #   predicted_number == real_label
 # end
