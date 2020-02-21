@@ -2,14 +2,14 @@ module Neuratron
   class RBFModel
 
     class Regression
-        def train(model, expected_outputs : Array(Array(Float64)))
-
+        def train(model, expected_outputs : Array(Float64))
+            return LibNeuratron.train(model, exepected_outputs.to_unsafe, expected_outputs.size)
         end
     end
 
     class Classification
         def train(model, expected_outputs : Array(Array(Float64)))
-
+            return LibNeuratron.train(model, exepected_outputs.to_unsafe, expected_outputs.size)
         end
     end
     @model : LibNeuratron::RadialModel*
@@ -21,8 +21,8 @@ module Neuratron
     def predict
     end
 
-    def train(expected_outputs : Array(Array(Float64)), kind )
-        kind.train(@model, expected_outputs)
+    def train(expected_outputs : Array(Array(Float64)), kind = Regression.new)
+        kind.train(@model, expected_outputs.flatten)
     end
 
     def save(filename : String)
