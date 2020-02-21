@@ -39,7 +39,7 @@ extern "C" {
 
     }
 
-    double* train(RadialModel* model, double* expected_output){
+    bool train(RadialModel* model, double* expected_output){
         cout << "========== Start regression training ==========" << endl;
         Eigen::MatrixXd phi(model->examples_count, model->examples_count);
         Eigen::MatrixXd matY(model->examples_count, 1);
@@ -70,6 +70,7 @@ extern "C" {
         for(int j = 0 ; j < model->examples_count; j++){
             model->w[j] = weights(j,0);
         }
+        return true;
     }
 
     double* predict_regression(const RadialModel* model, double *batch_input, int size_batch){
