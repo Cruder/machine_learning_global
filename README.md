@@ -3,7 +3,7 @@ Terminal 1:
 ```
 ./install.sh
 ```
-It will install curl, cmake, crystal and libeigen3-dev
+It will install curl, cmake, crystal, libeigen3-dev and gnuplot.
 
 Terminal 2:
 ```
