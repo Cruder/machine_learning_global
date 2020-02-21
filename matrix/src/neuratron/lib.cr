@@ -59,5 +59,9 @@ lib LibNeuratron
       w : Float64*
       gamma: Float64
   end
-  fun create_radial_model(examples : Float64, count_examples : Int32, size_input : Int32, size_output : Int32, gamma : Float64) : Pointer(RadialModel)
+  fun create_radial_model(examples : Float64*, count_examples : Int32, size_input : Int32, size_output : Int32, gamma : Float64) : Pointer(RadialModel)
+  fun train_radial_regression(model : RadialModel*, expected_outputs : Float64*) : Bool
+  fun train_radial_classification(model : RadialModel*, expected_outputs : Float64*, iteration : Int32) : Bool
+  fun predict_radial_regression(model : RadialModel*, batch_input : Float64*, size_batch : Int32) : Float64*
+  fun predict_radial_classification(model : RadialModel*, batch_input : Float64*, size_batch : Int32) : Float64*
 end

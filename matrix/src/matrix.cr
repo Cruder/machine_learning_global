@@ -27,3 +27,4 @@ def print_mnist_ascii(image)
   end
   puts
 end
+
