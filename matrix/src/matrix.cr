@@ -22,8 +22,8 @@ end
 
 def print_mnist_ascii(image)
   image.each_with_index do |pixel, i|
-    print pixel < 0.3 ? "." : "#"
     puts if i % 28 == 0 && i != 0
+    print pixel < 0.3 ? "." : "#"
   end
   puts
 end
