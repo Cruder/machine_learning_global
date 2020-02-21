@@ -341,28 +341,7 @@ inputs_to_classify = [
 model = Neuratron::RBFModel.new(inputs, 1, 0.1)
 model.train(expected_outputs, 1)
 
-predictions = model.predict(inputs_to_classify).as(Array(Float64))
-pp predictions
-positions = inputs_to_classify.zip(predictions).map do |data|
-    pp "heyaa"
-    pp data
-  #{ data[0][0], data[0][1],  data[1][0] }
+predictions = model.predict(inputs_to_classify)
+(0..inputs_to_classify.size).each do |i|
+    pp predictions[i]
 end
-
-pp "positions", positions
-
-#math_formulat = "#{model.weights[0]} * 1 + #{model.weights[1]} * x + #{model.weights[2]} * y"
-#fns = [
-#  AquaPlot::Function.new("0", title: "0"),
-#  AquaPlot::Function.new(math_formulat, title: math_formulat),
-#  AquaPlot::Scatter3D.from_points(positions).tap(&.set_title("Points")),
-#]
-
-#pp fns[1].style = "pm3d"
-
-#plt = AquaPlot::Plot3D.new fns
-#plt.set_key("left box")
-#plt.show
-#plt.set_view(100, 80, 1)
-#plt.show
-#plt.close

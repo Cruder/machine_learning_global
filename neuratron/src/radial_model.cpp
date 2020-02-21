@@ -69,18 +69,23 @@ extern "C" {
     }
 //     }
     double* predict_radial_regression(const RadialModel* model, double *batch_input, int size_batch){
+        cout << "====== Start predictions =======" << endl;
         const int count_point_in_batch = size_batch / model->size_input;
         double* predictions = new double[count_point_in_batch*model->size_output];
         for(int i = 0 ; i < count_point_in_batch; i++){
+            cout << "===== point " << i << " ======" << endl;
             Eigen::MatrixXd point(model->size_input, 1);
             for(int i  = 0 ; i < model->size_input; i++){
                 point(i, 0) = batch_input[i*count_point_in_batch];
             }
+            cout << "===== predict point " << i << " =======" << endl;
             double* prediction = predict_point(model, point);
+            cout << "===== add prediction point " << i << " =======" << endl;
             for(int o = 0 ; o < model->size_output; o++){
                 predictions[i*count_point_in_batch+o] = prediction[o];
             }
         }
+        cout << "====== End predictions =======" << endl;
         return predictions;
     }
 
@@ -105,42 +110,50 @@ bool train(RadialModel* model, double* expected_output, int iteration){
     Eigen::MatrixXd matY(model->examples_count, model->size_output);
     std::vector<Eigen::MatrixXd> points(model->examples_count);
     for(int r = 0 ; r < iteration; r++) {
-        cout << "====== Iteration " << r << " =====" << endl;
-        cout << "====== puts point to matrix " << r << " =====" << endl;
+//        cout << "====== Iteration " << r << " =====" << endl;
+//        cout << "====== puts point to matrix " << r << " =====" << endl;
         for (int i = 0; i < model->examples_count; i++) {
             Eigen::MatrixXd example_point(model->size_input, 1);
-            cout << "===== example point " << i << " =====" << endl;
+//            cout << "===== example point " << i << " =====" << endl;
             for (int j = 0; j < model->size_input; j++) {
                 example_point(j, 0) = model->examples[indexes[i] * model->size_input + j];
             }
-            cout << "===== example point expected output =====" << endl;
+//            cout << "===== example point expected output =====" << endl;
             for (int j = 0; j < model->size_output; j++) {
                 matY(i, j) = expected_output[indexes[i] * model->size_output + j];
             }
+            points[i] = example_point;
         }
-        cout << "===== fill phi =====" << endl;
+//        cout << "===== fill phi =====" << endl;
         for (int i = 0; i < model->examples_count; i++) {
             const Eigen::MatrixXd input_point = points[i];
-            cout << "input point input(" << input_point.rows() << ", " << input_point.cols() << ")" << endl;
+//            cout << "input point input(" << input_point.rows() << ", " << input_point.cols() << ")" << endl;
             for (int j = 0; j < model->examples_count; j++) {
                 const Eigen::MatrixXd ref_example = points[j];
-                cout << "output point ref(" << ref_example.rows() << ", " << ref_example.cols() << ")" << endl;
+//                cout << "output point ref(" << ref_example.rows() << ", " << ref_example.cols() << ")" << endl;
                 const double norm = norm_sq(input_point, ref_example, model->size_input);
                 phi(i, j) = exp(-model->gamma * norm);
             }
         }
-        cout << "===== weight calculus =====" << endl;
+//        cout << "===== weight calculus =====" << endl;
+
+//        cout << "phi(" << phi.rows() << ", " << phi.cols() << ")" << endl;
         const Eigen::MatrixXd inv_phi = phi.inverse();
+//        cout << "phi inv(" << inv_phi.rows() << ", " << inv_phi.cols() << ")" << endl;
         const Eigen::MatrixXd weights = inv_phi * matY;
-        cout << "====== To check/test, it might crash from here" << endl;
+//        cout << "weights(" << weights.rows() << ", " << weights.cols() << ")" << endl;
+//        cout << "====== To check/test, it might crash from here" << endl;
 
         for (int j = 0; j < model->examples_count; j++) {
             for(int k = 0 ; k < model->size_output; k++) {
-                model->w[k][j] += weights(k, j);
+                model->w[j][k] += weights(j, k);
             }
         }
+//        cout << "====== Shuffle start =======" << endl;
         shuffle(indexes, model->examples_count);
+//        cout << "====== Shuffle end =======" << endl;
     }
+    cout << "============= end train ================" << endl;
     return true;
 }
 
@@ -152,7 +165,7 @@ double* predict_point(const RadialModel* model, const Eigen::MatrixXd& point){
             const double weight = model->w[n][o];
             Eigen::MatrixXd example_point(model->size_input, 1);
             for (int i = 0; i < model->size_input; i++) {
-                example_point(i, 0) = model->examples[n * model->examples_count + i];
+                example_point(i, 0) = model->examples[n * model->size_input + i];
             }
             const double norm = norm_sq(point, example_point, model->size_input);
             sigma_outputs[o] = exp(-model->gamma * norm);
