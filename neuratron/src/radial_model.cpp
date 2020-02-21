@@ -73,14 +73,14 @@ extern "C" {
         const int count_point_in_batch = size_batch / model->size_input;
         double* predictions = new double[count_point_in_batch*model->size_output];
         for(int i = 0 ; i < count_point_in_batch; i++){
-            cout << "===== point " << i << " ======" << endl;
+//            cout << "===== point " << i << " ======" << endl;
             Eigen::MatrixXd point(model->size_input, 1);
             for(int i  = 0 ; i < model->size_input; i++){
                 point(i, 0) = batch_input[i*count_point_in_batch];
             }
-            cout << "===== predict point " << i << " =======" << endl;
+//            cout << "===== predict point " << i << " =======" << endl;
             double* prediction = predict_point(model, point);
-            cout << "===== add prediction point " << i << " =======" << endl;
+//            cout << "===== add prediction point " << i << " =======" << endl;
             for(int o = 0 ; o < model->size_output; o++){
                 predictions[i*count_point_in_batch+o] = prediction[o];
             }
@@ -158,7 +158,9 @@ bool train(RadialModel* model, double* expected_output, int iteration){
 }
 
 double* predict_point(const RadialModel* model, const Eigen::MatrixXd& point){
+//    cout << "pwa " << model->size_output << " |" << endl;
     double* sigma_outputs = new double[model->size_output];
+//    cout << "yoohh" << endl;
     for(int o = 0 ; o < model->size_output; o++) {
         sigma_outputs[o] = 0.;
         for (int n = 0; n < model->examples_count; n++) {
