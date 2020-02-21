@@ -23,7 +23,7 @@ extern "C" {
         double gamma;
         int examples_count;
         double* examples;
-        double** w;
+        double* w;
         int size_input;
         int size_output;
     };

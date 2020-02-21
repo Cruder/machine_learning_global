@@ -50,7 +50,7 @@ lib LibNeuratron
       examples : Float64*
       size_input: Int32
       size_output: Int32
-      w : Float64**
+      w : Float64*
       gamma: Float64
   end
   fun create_radial_model(input : Int32, size: Int32, gamma : Float64, example_count : Int32) : Pointer(RadialModel)
