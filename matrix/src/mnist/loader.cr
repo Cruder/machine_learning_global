@@ -46,6 +46,8 @@ module Mnist
       raise MatchingSizeException.new unless image_count == label_count
 
       @max_size = image_count
+
+      pp @max_size
     end
 
     def call(wanted_size : UInt32 = @max_size) : Array(Data)
@@ -53,8 +55,10 @@ module Mnist
       @images_io.seek(8)
       @labels_io.seek(8)
 
-      row_size = @images_io.read_bytes(UInt32, ENDIAN)
-      col_size = @images_io.read_bytes(UInt32, ENDIAN)
+      row_size = @images_io.read_bytes(Int32, ENDIAN)
+      col_size = @images_io.read_bytes(Int32, ENDIAN)
+
+      pp row_size, col_size
 
       image_slice = Bytes.new(row_size * col_size)
 

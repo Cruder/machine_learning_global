@@ -181,12 +181,13 @@ describe Neuratron::LinearModel do
     ]
 
     model = Neuratron::LinearModel.new(2, 1)
-    model.train(inputs.flatten, expected_outputs.flatten)
+    classification = Neuratron::LinearModel::Classification.new(0.01, 5)
+    model.train(inputs, expected_outputs, classification)
 
     predictions = inputs_to_classify.map do |input|
-      puts "Predict for #{input}"
-      results = model.predict(input, Neuratron::LinearModel::Classification.new)
-      puts "Prediction #{results}"
+      # puts "Predict for #{input}"
+      results = model.predict(input, classification)
+      # puts "Prediction #{results}"
       results
     end
 
@@ -212,10 +213,10 @@ describe Neuratron::LinearModel do
     plt.set_key("left box")
     plt.set_view(100, 190, 1)
     plt.show
-    plt.set_view(110, 200, 1)
-    plt.show
-    plt.set_view(102, 10, 1)
-    plt.show
+    # plt.set_view(110, 200, 1)
+    # plt.show
+    # plt.set_view(102, 10, 1)
+    # plt.show
     plt.close
   end
 end

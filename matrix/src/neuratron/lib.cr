@@ -39,6 +39,12 @@ lib LibNeuratron
     input : Float64*, input_size : Int32,
     output : Float64*, output_size : Int32
   ) : Bool
+  fun train_linear_model_classification(
+    model : LinearModel*,
+    input : Float64*,
+    output : Float64*,
+    alpha : Float64
+  )
 
   fun predict_linear_model_regression(model : LinearModel*, input : Float64*) : Float64*
   fun predict_linear_model_classification(model : LinearModel*, input : Float64*) : Float64*

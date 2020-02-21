@@ -16,7 +16,7 @@ module Neuratron
     end
 
     def train_regression(inputs : Array(Array(Float64)), outputs : Array(Array(Float64)), iteration : Int32, training_rate : Float64)
-        zip_original = inputs.zip(outputs).map { |input, output| [input, output] }
+        zip_original = inputs.zip(outputs)
         (1..iteration).each { |i|
           puts "Iteration #{i}"
             shuffled_inputs, shuffled_outputs = shuffle_dataset(zip_original)
@@ -57,6 +57,30 @@ module Neuratron
       Array.new(@model.value.d[@model.value.layer_count - 1] - 1) do |i|
         i == indice ? 1.0 : -1.0
       end
+    end
+
+    def save(filename)
+      data = {
+        layer_count: @model.value.layer_count,
+        w: w,
+        d: d
+      }.to_json
+
+      File.write(filename, data)
+    end
+
+    private def w
+      Array.new(@model.value.layer_count - 1) do |i|
+        Array.new(d[i]) do |j|
+          Array.new(d[i + 1]) do |k|
+            @model.value.w[i][j][k]
+          end
+        end
+      end
+    end
+
+    private def d
+      Array.new(@model.value.layer_count) { |i| @model.value.d[i] }
     end
   end
 end

@@ -51,5 +51,7 @@ describe Neuratron::LinearModel do
     # plt.set_view(100, 80, 1)
     # plt.show
     plt.close
+
+    model.save("./save/tmp.json")
   end
 end
