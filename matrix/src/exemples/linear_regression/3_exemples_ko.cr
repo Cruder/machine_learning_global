@@ -67,7 +67,7 @@ if model.train(inputs.flatten, expected_outputs.flatten)
   end
 
   positions = inputs_to_classify.zip(predictions).map do |data|
-    { data[0][0], data[0][1],  data[1] }
+    { data[0][0], data[0][1],  data[1][0] }
   end
 
   math_formulat = "#{model.weights[0]} * 1 + #{model.weights[1]} * x + #{model.weights[2]} * y"

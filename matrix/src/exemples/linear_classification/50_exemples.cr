@@ -351,8 +351,8 @@ points1 = Array(Tuple(Float64, Float64, Float64)).new
 points2 = Array(Tuple(Float64, Float64, Float64)).new
 
 inputs_to_classify.zip(predictions).map do |data|
-  point = { data[0][0], data[0][1], data[1] }
-  data[1] < 0 ? points1 << point : points2 << point
+  point = { data[0][0], data[0][1], data[1][0] }
+  data[1][0] < 0 ? points1 << point : points2 << point
 end
 
 math_formulat = "#{model.weights[0]} * 1 + #{model.weights[1]} * x + #{model.weights[2]} * y"
