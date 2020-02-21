@@ -42,10 +42,10 @@ extern "C" {
 
     struct RadialModel* create_radial_model(double* examples, int count_example, int size_input, int size_output, double gamma);
 
-    bool train_regression(RadialModel* model, double* expected_outputs);
-    bool train_classification(RadialModel* model, double* expected_outputs, int iteration);
-    double* predict_classification(const RadialModel* model, double* batch_input, int size_batch);
-    double* predict_regression(const RadialModel* model, double *batch_input, int size_batch);
+    bool train_radial_regression(RadialModel* model, double* expected_outputs);
+    bool train_radial_classification(RadialModel* model, double* expected_outputs, int iteration);
+    double* predict_radial_classification(const RadialModel* model, double* batch_input, int size_batch);
+    double* predict_radial_regression(const RadialModel* model, double *batch_input, int size_batch);
 }
 
 #endif // __NEURATRON_H__

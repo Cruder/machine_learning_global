@@ -56,19 +56,19 @@ extern "C" {
             }
         }
         model->examples = examples;
+        cout << "Init (" << model->examples_count << ", " << model->size_input << ", " << model->size_output << endl;
         return model;
     }
 
-    bool train_regression(RadialModel* model, double* expected_outputs){
+    bool train_radial_regression(RadialModel* model, double* expected_outputs){
         return train(model, expected_outputs, 1);
     }
 
-    bool train_classification(RadialModel* model, double* expected_outputs, int iteration){
+    bool train_radial_classification(RadialModel* model, double* expected_outputs, int iteration){
         return train(model, expected_outputs, iteration);
     }
 //     }
-
-    double* predict_regression(const RadialModel* model, double *batch_input, int size_batch){
+    double* predict_radial_regression(const RadialModel* model, double *batch_input, int size_batch){
         const int count_point_in_batch = size_batch / model->size_input;
         double* predictions = new double[count_point_in_batch*model->size_output];
         for(int i = 0 ; i < count_point_in_batch; i++){
@@ -84,9 +84,9 @@ extern "C" {
         return predictions;
     }
 
-    double* predict_classification(const RadialModel* model, double* batch_input, int size_batch){
+    double* predict_radial_classification(const RadialModel* model, double* batch_input, int size_batch){
         const int count_point_in_batch = size_batch / model->size_input;
-        double* predictions = predict_regression(model, batch_input, size_batch);
+        double* predictions = predict_radial_regression(model, batch_input, size_batch);
         for(int i  = 0 ; i < count_point_in_batch; i++ ){
             predictions[i] = predictions[i] > 0 ? 1.0 : -1.0;
         }
@@ -100,32 +100,36 @@ bool train(RadialModel* model, double* expected_output, int iteration){
     for(int i = 0 ; i < model->examples_count; i++){
         indexes[i]= i;
     }
-    cout << "========== Start regression training ==========" << endl;
+    cout << "========== Start training ==========" << endl;
     Eigen::MatrixXd phi(model->examples_count, model->examples_count);
     Eigen::MatrixXd matY(model->examples_count, model->size_output);
     std::vector<Eigen::MatrixXd> points(model->examples_count);
     for(int r = 0 ; r < iteration; r++) {
+        cout << "====== Iteration " << r << " =====" << endl;
+        cout << "====== puts point to matrix " << r << " =====" << endl;
         for (int i = 0; i < model->examples_count; i++) {
             Eigen::MatrixXd example_point(model->size_input, 1);
-            for (int j = 0; j < model->examples_count; j++) {
-
+            cout << "===== example point " << i << " =====" << endl;
+            for (int j = 0; j < model->size_input; j++) {
                 example_point(j, 0) = model->examples[indexes[i] * model->size_input + j];
             }
-
+            cout << "===== example point expected output =====" << endl;
             for (int j = 0; j < model->size_output; j++) {
-                matY(i, j) = expected_output[indexes[i] * model->examples_count + j];
+                matY(i, j) = expected_output[indexes[i] * model->size_output + j];
             }
         }
-
+        cout << "===== fill phi =====" << endl;
         for (int i = 0; i < model->examples_count; i++) {
-            const auto input_point = points[i];
+            const Eigen::MatrixXd input_point = points[i];
+            cout << "input point input(" << input_point.rows() << ", " << input_point.cols() << ")" << endl;
             for (int j = 0; j < model->examples_count; j++) {
-                const auto ref_example = points[j];
+                const Eigen::MatrixXd ref_example = points[j];
+                cout << "output point ref(" << ref_example.rows() << ", " << ref_example.cols() << ")" << endl;
                 const double norm = norm_sq(input_point, ref_example, model->size_input);
                 phi(i, j) = exp(-model->gamma * norm);
             }
         }
-
+        cout << "===== weight calculus =====" << endl;
         const Eigen::MatrixXd inv_phi = phi.inverse();
         const Eigen::MatrixXd weights = inv_phi * matY;
         cout << "====== To check/test, it might crash from here" << endl;
