@@ -3,6 +3,7 @@
 #include <Eigen/Dense>
 
 #include <iostream>
+#include <random>
 
 extern "C" {
   struct LinearModel* create_linear_model(int input_size, int output_size) {
@@ -10,14 +11,20 @@ extern "C" {
     model->sizeInput = input_size;
     model->sizeOutput = output_size;
 
+    std::default_random_engine generator;
+    std::normal_distribution<double> distribution(0.0,1.0);
+
     model->inputs = new double[(input_size + 1) * output_size];
+    for(int i = 0; i < (input_size+1) * output_size; i++){
+        model->inputs[i] = distribution(generator) / (input_size+1);
+    }
 
     return model;
   }
 
   bool train_linear_model(struct LinearModel* model, double* input, int input_size, double* output, int output_size) {
-    std::cout << input[0] << " " << input[1] << std::endl;
-    std::cout << output[0] << std::endl;
+    // std::cout << input[0] << " " << input[1] << std::endl;
+    // std::cout << output[0] << std::endl;
 
     int example_counts = input_size / model->sizeInput;
 
@@ -42,8 +49,8 @@ extern "C" {
       matY(idY, idX) = output[i];
     }
 
-    std::cout << matX << std::endl << std::endl;
-    std::cout << matY << std::endl << std::endl;
+    // std::cout << matX << std::endl << std::endl;
+    // std::cout << matY << std::endl << std::endl;
 
 
     auto res1 = matX.transpose() * (matX);
@@ -54,15 +61,69 @@ extern "C" {
     auto res3 = res2 * (matX.transpose());
     auto result = res3 * (matY);
 
-    std::cout << result << std::endl;
+    // std::cout << result << std::endl;
 
     // model->inputs = result.data();
 
     Eigen::Map<Eigen::MatrixXd>(model->inputs, result.rows(), result.cols()) = result;
 
-    // Eigen::MatrixX3d in = input.inputs;
-    // Eigen::MatrixX3d in = input.inputs;
-    // Eigen::VectorXf w = model.inputs;
+    return true;
+  }
+
+
+  // W = W hadamard alpha * (Y - X1) * X0
+  bool train_linear_model_classification(struct LinearModel* model, double* input, double* output, double alpha) {
+    std::cout << std::endl << input[0] << std::endl;
+
+    Eigen::MatrixXd matX0(1, model->sizeInput + 1);
+    matX0(0, 0) = 1;
+    for(int i = 0; i < model->sizeInput; ++i) {
+      matX0(0, i + 1) = input[i];
+    }
+
+    Eigen::MatrixXd matW(model->sizeInput + 1, model->sizeOutput);
+    for(int i = 0; i < model->sizeInput + 1; ++i) {
+      for(int j = 0; j < model->sizeOutput; ++j) {
+        matW(i, j) = model->inputs[i * model->sizeInput + j];
+      }
+    }
+
+    Eigen::MatrixXd matY(1, model->sizeOutput);
+    for(int i = 0; i < model->sizeOutput; ++i) {
+      matY(0, i) = output[i];
+    }
+
+    double* x1_prediction = predict_linear_model_classification(model, input);
+    Eigen::MatrixXd matX1(1, model->sizeOutput);
+    for(int i = 0; i < model->sizeOutput; ++i) {
+      matX1(0, i) = output[i];
+    }
+
+    // std::cout << "matX0" << std::endl;
+    // std::cout << matX0 << std::endl;
+    // std::cout << "matW" << std::endl;
+    // std::cout << matW << std::endl;
+    // std::cout << "matY" << std::endl;
+    // std::cout << matY << std::endl;
+    // std::cout << "matX1" << std::endl;
+    // std::cout << matX1 << std::endl;
+
+    Eigen::MatrixXd temp = (alpha * (matY - matX1) * matX0).transpose();
+
+    // std::cout << "temp" << std::endl;
+    // std::cout << temp << std::endl;
+
+    Eigen::MatrixXd result = matrix_hadamard(matW, temp);
+
+    // std::cout << "result" << std::endl;
+    // std::cout << result << std::endl;
+
+    for(int i = 0; i < model->sizeInput + 1; ++i) {
+      for(int j = 0; j < model->sizeOutput; ++j) {
+        model->inputs[i * model->sizeInput + j] = result(i, j);
+      }
+    }
+
     return true;
   }
 
