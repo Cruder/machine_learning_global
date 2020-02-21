@@ -8,6 +8,11 @@ echo -e "\e[36mCreate cmake artefacts\e[39m"
 sudo cmake ..
 echo -e "\e[36mBuild lib\e[39m"
 sudo make install
+
+LD_LIBRARY_PATH=`pwd`/
+echo -e "\e[36mExport LD_LIBRARY\e[39m"
+echo -e "\e[35mValue " $LD_LIBRARY_PATH "\e[39m"
+export LD_LIBRARY_PATH
 cd ../../
 
 cd matrix
