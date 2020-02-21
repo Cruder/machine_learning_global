@@ -70,7 +70,7 @@ extern "C" {
 
     double* predict_regression(const RadialModel* model, double *batch_input, int size_batch){
         const int count_point_in_batch = size_batch / model->size_input;
-        double predictions[count_point_in_batch*model->size_output];
+        double* predictions = new double[count_point_in_batch*model->size_output];
         for(int i = 0 ; i < count_point_in_batch; i++){
             Eigen::MatrixXd point(model->size_input, 1);
             for(int i  = 0 ; i < model->size_input; i++){
@@ -96,7 +96,7 @@ extern "C" {
 }
 
 bool train(RadialModel* model, double* expected_output, int iteration){
-    int indexes[model->examples_count];
+    int* indexes = new int[model->examples_count];
     for(int i = 0 ; i < model->examples_count; i++){
         indexes[i]= i;
     }
@@ -141,7 +141,7 @@ bool train(RadialModel* model, double* expected_output, int iteration){
 }
 
 double* predict_point(const RadialModel* model, const Eigen::MatrixXd& point){
-    double sigma_outputs[model->size_output];
+    double* sigma_outputs = new double[model->size_output];
     for(int o = 0 ; o < model->size_output; o++) {
         sigma_outputs[o] = 0.;
         for (int n = 0; n < model->examples_count; n++) {
