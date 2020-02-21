@@ -11,7 +11,7 @@
 using std::cout;
 using std::endl;
 
-double predict_regression_point(const RadialModel* model, const Eigen::MatrixXd& point);
+double* predict_point(const RadialModel* model, const Eigen::MatrixXd& point);
 bool train(RadialModel* model, double* expected_output, int iteration);
 
 double norm_sq(Eigen::MatrixXd pointA, Eigen::MatrixXd pointB, int count_coordinates){
@@ -151,8 +151,8 @@ double* predict_point(const RadialModel* model, const Eigen::MatrixXd& point){
                 example_point(i, 0) = model->examples[n * model->examples_count + i];
             }
             const double norm = norm_sq(point, example_point, model->size_input);
-            sigma_output[o] = exp(-model->gamma * norm);
+            sigma_outputs[o] = exp(-model->gamma * norm);
         }
     }
-    return sigma_output;
+    return sigma_outputs;
 }
