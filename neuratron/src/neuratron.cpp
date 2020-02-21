@@ -66,22 +66,29 @@ extern "C" {
     return true;
   }
 
-  double predict_linear_model_regression(struct LinearModel* model, double* input) {
+  double* predict_linear_model_regression(struct LinearModel* model, double* input) {
     double result = 0;
 
+    double* results = new double[model->sizeOutput];
 
-    result += model->inputs[0];
-    for(int i = 0; i < model->sizeInput; ++i) {
-      result += model->inputs[i + 1] * input[i];
+    for(int i = 0; i < model->sizeOutput; ++i) {
+      results[i] += model->inputs[i * (model->sizeInput)];
+      for(int j = 0; j < model->sizeInput; ++j) {
+        results[i] += model->inputs[i * (model->sizeInput) + j + 1] * input[j];
+      }
     }
 
-    return result;
+    return results;
   }
 
-  double predict_linear_model_classification(struct LinearModel* model, double* input) {
-    double result = predict_linear_model_regression(model, input);
+  double* predict_linear_model_classification(struct LinearModel* model, double* input) {
+    double* results = predict_linear_model_regression(model, input);
 
-    return result > 0 ? 1.0 : -1.0;
+    for(int i = 0; i < model->sizeOutput; ++i) {
+      results[i] = results[i] > 0 ? 1.0 : -1.0;
+    }
+
+    return results;
   }
 
 
