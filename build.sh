@@ -1,18 +1,18 @@
+#!/bin/bash
 set -e
 
 echo -e "\e[36mCreate folder\e[39m"
 mkdir -p neuratron/build
 cd neuratron/build
 echo -e "\e[36mCreate cmake artefacts\e[39m"
-cmake ..
+sudo cmake ..
 echo -e "\e[36mBuild lib\e[39m"
-make
+sudo make install
 
 LD_LIBRARY_PATH=`pwd`/
 echo -e "\e[36mExport LD_LIBRARY\e[39m"
 echo -e "\e[35mValue " $LD_LIBRARY_PATH "\e[39m"
 export LD_LIBRARY_PATH
-
 cd ../../
 
 cd matrix
