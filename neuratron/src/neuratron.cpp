@@ -73,7 +73,11 @@ extern "C" {
 
   // W = W hadamard alpha * (Y - X1) * X0
   bool train_linear_model_classification(struct LinearModel* model, double* input, double* output, double alpha) {
-    std::cout << std::endl << input[0] << std::endl;
+    // std::cout << "Start train_linear_model_classification" << std::endl;
+    // std::cout << std::endl << input[0] << std::endl;
+
+    // std::cout << model->sizeInput + 1 << std::endl;
+    // std::cout << model->sizeOutput << std::endl;
 
     Eigen::MatrixXd matX0(1, model->sizeInput + 1);
     matX0(0, 0) = 1;
@@ -81,17 +85,27 @@ extern "C" {
       matX0(0, i + 1) = input[i];
     }
 
+    // std::cout << "matX0" << std::endl;
+    // std::cout << matX0 << std::endl;
+
     Eigen::MatrixXd matW(model->sizeInput + 1, model->sizeOutput);
     for(int i = 0; i < model->sizeInput + 1; ++i) {
       for(int j = 0; j < model->sizeOutput; ++j) {
-        matW(i, j) = model->inputs[i * model->sizeInput + j];
+        // std::cout << "Access " << i << ", " << j << " => " << j * (model->sizeInput + 1) + i << std::endl;
+        matW(i, j) = model->inputs[j * (model->sizeInput + 1) + i];
       }
     }
+
+    // std::cout << "matW" << std::endl;
+    // std::cout << matW << std::endl;
 
     Eigen::MatrixXd matY(1, model->sizeOutput);
     for(int i = 0; i < model->sizeOutput; ++i) {
       matY(0, i) = output[i];
     }
+
+    // std::cout << "matY" << std::endl;
+    // std::cout << matY << std::endl;
 
     double* x1_prediction = predict_linear_model_classification(model, input);
     Eigen::MatrixXd matX1(1, model->sizeOutput);
@@ -99,28 +113,31 @@ extern "C" {
       matX1(0, i) = output[i];
     }
 
-    // std::cout << "matX0" << std::endl;
-    // std::cout << matX0 << std::endl;
-    // std::cout << "matW" << std::endl;
-    // std::cout << matW << std::endl;
-    // std::cout << "matY" << std::endl;
-    // std::cout << matY << std::endl;
     // std::cout << "matX1" << std::endl;
     // std::cout << matX1 << std::endl;
 
-    Eigen::MatrixXd temp = (alpha * (matY - matX1) * matX0).transpose();
+    Eigen::MatrixXd temp = (alpha * (matY - matX1));
 
     // std::cout << "temp" << std::endl;
     // std::cout << temp << std::endl;
 
-    Eigen::MatrixXd result = matrix_hadamard(matW, temp);
+    // std::cout << "matW(" << matW.cols() << ", " << matW.rows() << ")" << std::endl;
+    // std::cout << "temp(" << temp.cols() << ", " << temp.rows() << ")" << std::endl;
+    // std::cout << "matX0(" << matX0.cols() << ", " << matX0.rows() << ")" << std::endl;
+
+    Eigen::MatrixXd temp2 = matX0.transpose() * temp;
+
+    // std::cout << "temp2" << std::endl;
+    // std::cout << temp2 << std::endl;
+
+    Eigen::MatrixXd result = matrix_hadamard(matW, temp2);
 
     // std::cout << "result" << std::endl;
     // std::cout << result << std::endl;
 
     for(int i = 0; i < model->sizeInput + 1; ++i) {
       for(int j = 0; j < model->sizeOutput; ++j) {
-        model->inputs[i * model->sizeInput + j] = result(i, j);
+        model->inputs[j * model->sizeInput + i] = result(i, j);
       }
     }
 

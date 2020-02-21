@@ -41,7 +41,9 @@ module Neuratron
     end
 
     def train_classification(inputs, outputs, iteration, training_rate)
-        zip_original = inputs.zip(outputs).map { |input, output| [input, output] }
+      pp inputs.size
+      pp outputs.size
+      zip_original = inputs.zip(outputs)
         (1..iteration).each { |i|
           puts "Iteration #{i}"
             shuffled_inputs, shuffled_outputs = shuffle_dataset(zip_original)
@@ -62,8 +64,8 @@ module Neuratron
     def save(filename)
       data = {
         layer_count: @model.value.layer_count,
+        d: d,
         w: w,
-        d: d
       }.to_json
 
       File.write(filename, data)

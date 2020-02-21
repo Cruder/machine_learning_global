@@ -27,7 +27,6 @@ print_mnist_ascii(images[0])
 
 model = Neuratron::DeepModel.new(28 * 28, 16, 10)
 
-model.train_classification(images.flatten, labels.flatten, 2000, 0.01)
-
+model.train_classification(images, labels, 5, 0.01)
 
 model.save("./save/deep_mnist.json")

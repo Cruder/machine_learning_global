@@ -30,7 +30,7 @@ model = Neuratron::LinearModel.new(28 * 28, 10)
 model.train(
   images,
   labels,
-  Neuratron::LinearModel::Classification.new(alpha: 0.01, iteration: 5000)
+  Neuratron::LinearModel::Classification.new(alpha: 0.01, iteration: 5)
 )
 
 

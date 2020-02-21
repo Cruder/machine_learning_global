@@ -3,9 +3,9 @@ lib LibNeuratron
   @[Extern]
   struct DeepModel
     layer_count : Int32
-    deltas : Float64**
-    x : Float64**
     w : Float64***
+    x : Float64**
+    deltas : Float64**
     d : Int32*
   end
 
